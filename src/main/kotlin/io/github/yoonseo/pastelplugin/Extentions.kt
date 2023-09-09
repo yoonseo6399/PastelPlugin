@@ -3,6 +3,7 @@ package io.github.yoonseo.pastelplugin
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
+import net.kyori.adventure.text.TranslatableComponent
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -65,3 +66,17 @@ fun Component.toText() =
     (this as TextComponent).content()
 
 fun String.toComponent() = Component.text(this)
+
+infix fun ItemStack.ComponentNamedWith(textComponent: TextComponent): Boolean {
+    val com1 = this.itemMeta?.displayName() ?: return false
+    if(com1 is TranslatableComponent){
+        return com1.args().firstNotNullOfOrNull { it as? TextComponent }?.content() == textComponent.content()
+    }else if(com1 is TextComponent){
+        return com1.content() == textComponent.content()
+    }else {
+        Bukkit.getLogger().warning("ItemName is Not a comparable object")
+        return false
+    }
+}
+
+//fun ItemStack.equals(any : Any?) = itemMeta?.displayName()

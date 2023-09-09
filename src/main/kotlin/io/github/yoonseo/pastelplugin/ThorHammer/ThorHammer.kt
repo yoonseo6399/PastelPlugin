@@ -39,11 +39,11 @@ class ThorHammer : AbstractCustomItem() {
                     isReturning = false
                     kill()
                 }
-            }else if(livingEntity == null) {
+            }else if(livingEntity == null) {// 땅에 부딛힘?
                 //location.world.createExplosion(location,4f)
                 hammerObject?.homingDirection?.add(Vector(1,1,0))
                 lastAttackEntity = null
-            }else if(lastAttackEntity != livingEntity){
+            }else if(lastAttackEntity != livingEntity){ // 무한번개 막기
                 lastAttackEntity = livingEntity
                 livingEntity.damage(30.0,shooter)
                 livingEntity.velocity = location.direction.multiply(2)

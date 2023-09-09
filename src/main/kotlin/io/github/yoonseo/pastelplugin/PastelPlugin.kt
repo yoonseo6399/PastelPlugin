@@ -5,6 +5,7 @@ import io.github.yoonseo.pastelplugin.boss.Boss
 import io.github.yoonseo.pastelplugin.boss.WitherKing
 import io.github.yoonseo.pastelplugin.boss.bossCommand
 import io.github.yoonseo.pastelplugin.system.ListenerRegister
+import io.github.yoonseo.pastelplugin.valorant.Jett.Dash
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -20,12 +21,14 @@ class PastelPlugin : JavaPlugin() {
     override fun onEnable() {
         // Plugin startup logic
         plugin = this
-        WitherKing()
-        Bukkit.getPlayer("command_juho")?.let {Boss.spawn("WitherKing",it.location) }
+        //WitherKing()
+        //Bukkit.getPlayer("command_juho")?.let {Boss.spawn("WitherKing",it.location) }
+
         ListenerRegister.registerEvent("$projectPath.itemHandlers.EventHandler")
         //ListenerRegister.registerAllEvents()
 
         Bukkit.getPlayer("command_juho")?.inventory?.addItem(ThorHammer().getItem())
+        Bukkit.getPlayer("command_juho")?.inventory?.addItem(Dash().getItem())
         Bukkit.getLogger().info("PastelPlugin is Loaded")
     }
 

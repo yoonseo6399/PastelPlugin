@@ -1,5 +1,6 @@
 package io.github.yoonseo.pastelplugin.itemHandlers
 
+import io.github.yoonseo.pastelplugin.ComponentNamedWith
 import io.github.yoonseo.pastelplugin.isNamed
 import io.github.yoonseo.pastelplugin.itemHandlers.Requires.*
 import io.github.yoonseo.pastelplugin.system.register
@@ -21,7 +22,7 @@ abstract class AbstractCustomItem : CustomItem {
 
     override val lores: ArrayList<Component?> = ArrayList()
 
-
+    val listeners = ArrayList<(PlayerItemHeldEvent) -> Unit>();
     val interactEventList = ArrayList<AdvancedInteractConditions.(PlayerInteractEvent) -> Unit>()
     val hotbarItemChangeEventList = ArrayList<(PlayerItemHeldEvent) -> Unit>()
     override fun playerInteractionEvent(advancedInteractConditions: AdvancedInteractConditions.(PlayerInteractEvent) -> Unit) {
@@ -31,27 +32,41 @@ abstract class AbstractCustomItem : CustomItem {
     override fun playerItemChangeToOtherItemEvent(code: (PlayerItemHeldEvent) -> Unit) {
         hotbarItemChangeEventList.add(code)
     }
+
+    fun whenSelected(action: (PlayerItemHeldEvent) -> Unit){
+        listeners.add(action)
+    }
+
+    @EventHandler
+    fun eventHandler(e: PlayerItemHeldEvent){
+        val nowItem = e.player.inventory.getItem(e.newSlot) ?: return
+        val previousItem = e.player.inventory.getItem(e.previousSlot)
+        if(nowItem ComponentNamedWith name){
+            listeners.forEach{
+                it.invoke(e)
+            }
+        }
+        for (event in hotbarItemChangeEventList){
+
+            if (previousItem != null) {
+                if(!(nowItem ComponentNamedWith name) &&
+                        previousItem ComponentNamedWith name)
+                {
+                    event(e)
+                }
+            }
+        }
+    }
     @EventHandler
     fun interact(e: PlayerInteractEvent){
         for (interactEvent in interactEventList){
             try {
                 interactEvent(AdvancedInteractConditions(this,e),e)
             }catch (_: RequirementDenied){ }
-
         }
     }
 
 
-    @EventHandler
-    fun changeHotbarItem(e: PlayerItemHeldEvent){
-        for (event in hotbarItemChangeEventList){
-            if(e.player.inventory.getItem(e.previousSlot)?.displayName() == name &&
-                    e.player.inventory.getItem(e.newSlot)?.displayName() != name)
-            {
-                event(e)
-            }
-        }
-    }
 
     fun getItem(): ItemStack{
         return ItemStack(itemType,1).apply {
