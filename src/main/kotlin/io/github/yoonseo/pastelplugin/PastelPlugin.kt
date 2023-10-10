@@ -1,9 +1,7 @@
 package io.github.yoonseo.pastelplugin
 
 import io.github.yoonseo.pastelplugin.ThorHammer.ThorHammer
-import io.github.yoonseo.pastelplugin.boss.Boss
-import io.github.yoonseo.pastelplugin.boss.WitherKing
-import io.github.yoonseo.pastelplugin.boss.bossCommand
+import io.github.yoonseo.pastelplugin.boss.*
 import io.github.yoonseo.pastelplugin.system.ListenerRegister
 import io.github.yoonseo.pastelplugin.valorant.Jett.Dash
 import org.bukkit.Bukkit
@@ -25,6 +23,8 @@ class PastelPlugin : JavaPlugin() {
         //Bukkit.getPlayer("command_juho")?.let {Boss.spawn("WitherKing",it.location) }
 
         ListenerRegister.registerEvent("$projectPath.itemHandlers.EventHandler")
+
+
         //ListenerRegister.registerAllEvents()
 
         Bukkit.getPlayer("command_juho")?.inventory?.addItem(ThorHammer().getItem())
@@ -40,3 +40,4 @@ class PastelPlugin : JavaPlugin() {
 
 val plugin = PastelPlugin.plugin
 const val projectPath = """io.github.yoonseo.pastelplugin"""
+val overworld = Bukkit.getWorld("world")!!

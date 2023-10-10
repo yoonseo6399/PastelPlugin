@@ -1,15 +1,19 @@
 package io.github.yoonseo.pastelplugin
 
 
+import getDistance
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.TranslatableComponent
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.entity.Entity
+import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
 
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
+import kotlin.reflect.KClass
 
 
 infix fun ItemStack.isNamed(name : String) =
@@ -34,6 +38,11 @@ fun ScheduleRepeating(cycle: Long = 1,delay: Long = 0,expireTick: Long = -1,task
     if(taskName != "") PastelPlugin.taskList[taskName] = id
     return id
 }
+
+fun RepeatUntil(cycle: Long = 1,delay: Long = 0,expireTick: Long = -1,taskName: String = "",until : () -> Boolean,task: (Int) -> Unit): Int =
+    ScheduleRepeating(cycle,delay,expireTick,taskName) {task(it); if(until()) CancelTask(it) }
+
+
 fun CancelTask(id: Int) {
     Bukkit.getScheduler().cancelTask(id)
 }
@@ -44,6 +53,13 @@ fun CancelTask(taskName: String){
 fun Delay(ticks: Long,task: Runnable): Int{
     return Bukkit.getScheduler().scheduleSyncDelayedTask(PastelPlugin.plugin,task,ticks)
 }
+
+infix fun Location.distanceTo(loc : Location) = getDistance(this,loc)
+
+fun Mob.getDistanceFromTarget() : Double? = target?.let { it.location distanceTo location }
+
+fun Mob.isTargetInRange(range: Double) = getDistanceFromTarget()?.let { it <= range } == true
+
 
 infix fun Vector.seeVectorTo(vector: Vector): Vector{
     return subtract(vector).normalize().multiply(-1)
@@ -77,6 +93,10 @@ infix fun ItemStack.ComponentNamedWith(textComponent: TextComponent): Boolean {
         Bukkit.getLogger().warning("ItemName is Not a comparable object")
         return false
     }
+}
+
+fun <T : Entity> Location.spawn(clazz: KClass<T>) : T{
+   return world.spawn(this,clazz.java)
 }
 
 //fun ItemStack.equals(any : Any?) = itemMeta?.displayName()
