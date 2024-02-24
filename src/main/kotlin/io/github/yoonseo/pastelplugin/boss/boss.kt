@@ -1,36 +1,14 @@
 package io.github.yoonseo.pastelplugin.boss
 
-import io.github.monun.kommand.KommandContext
-import io.github.monun.kommand.kommand
-import io.github.yoonseo.pastelplugin.PastelPlugin
-import io.github.yoonseo.pastelplugin.ScheduleRepeating
-import io.github.yoonseo.pastelplugin.overworld
-import io.github.yoonseo.pastelplugin.spawn
+
+import io.github.yoonseo.pastelplugin.*
 import org.bukkit.Location
 import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 import java.util.EnumSet
 import kotlin.reflect.KClass
 
-class bossCommand {
-    init{
-        PastelPlugin.plugin.kommand {
-            register("boss"){
-                then("spawn"){
-                    then("bossName" to string()){
-                        executes {
-                            if(!isPlayer) {
-                                sender.sendMessage("player only command")
-                                return@executes
-                            }
-                            Boss.spawn(it["bossName"],player.location)
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
+
 
 abstract class Boss(bossName : String){
     companion object{
@@ -50,16 +28,18 @@ abstract class Boss(bossName : String){
 }
 
 
-open class CustomEntity<E : LivingEntity>(private val clazz: KClass<E>){
+open class CustomEntity<E : LivingEntity> protected constructor(private val clazz: KClass<E>){
     var isSpawned = false
     var hasCustomAI = false
     var customAI : CustomAI<*>? = null
+    private var onDeath : () -> Unit = {}
+    private var onSpawn : () -> Unit = {}
 
 
     private var entityInit : (E.() -> Unit)? = null
     private lateinit var entity : E
 
-    operator fun invoke(): E = if (isSpawned) entity else spawn(overworld.spawnLocation)
+    operator fun invoke(): E = if (isSpawned) entity else spawn(overworld.spawnLocation).also { debug("intance invoke") }
     companion object{
         private val entityList = HashMap<KClass<*>,CustomEntity<*>>()
 
@@ -74,8 +54,21 @@ open class CustomEntity<E : LivingEntity>(private val clazz: KClass<E>){
         entity = location.spawn(clazz)
         entityInit?.invoke(entity)
         isSpawned = true
-
+        onSpawn()
         return entity
+    }
+
+    fun OnSpawn(task: () -> Unit){
+        onSpawn = task
+    }
+    fun OnDeath(task: () -> Unit){
+        onDeath = task
+        ScheduleRepeating {
+            if(entity.isDead){
+                onDeath()
+                CancelTask(it)
+            }
+        }
     }
 
     fun entityInit(init : (E.() -> Unit)) { entityInit = init }

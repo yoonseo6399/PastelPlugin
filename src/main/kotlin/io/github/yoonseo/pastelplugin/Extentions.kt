@@ -1,3 +1,5 @@
+@file:Suppress("FunctionName")
+
 package io.github.yoonseo.pastelplugin
 
 
@@ -7,7 +9,9 @@ import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.TranslatableComponent
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.block.Block
 import org.bukkit.entity.Entity
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
 
@@ -22,25 +26,41 @@ infix fun ItemStack.isntNamed(name : String) =
     (this.itemMeta?.displayName() as? TextComponent)?.content() != name
 
 
+internal const val ALLOCATOR = """ALLOT_OB:"""
 
-
-fun ScheduleRepeating(cycle: Long = 1,delay: Long = 0,expireTick: Long = -1,taskName: String = "",task: (Int) -> Unit): Int{
+fun ScheduleRepeating(cycle: Long = 1,delay: Long = 0,expireTick: Long = -1,taskName: String = "",until: (() -> Boolean)? = null,task: (Int) -> Unit): Int {
     val plugin = PastelPlugin.plugin
-    if(taskName != "" && PastelPlugin.taskList.contains(taskName)) return -1
+    if(taskName != "" && PastelPlugin.taskList.contains(taskName)) CancelTask(taskName)
 
     var id = -1
-    id = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,{
-        task(id)
-    },delay,cycle)
-    if(expireTick > 0){
+
+
+
+    id = if(until != null){
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, {
+            task(id)
+            if (until()) {
+                debug("task cancelled by until. $taskName")
+                if(taskName != "") CancelTask(taskName) else CancelTask(id)
+            }
+        }, delay, cycle)
+    }else {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,{
+            task(id)
+        },delay,cycle)
+    }
+
+    if(expireTick > 0 && until == null){
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin,{ Bukkit.getScheduler().cancelTask(id);PastelPlugin.taskList.remove(taskName) },expireTick)
     }
     if(taskName != "") PastelPlugin.taskList[taskName] = id
     return id
 }
+fun ScheduleRepeating(cycle: Long = 1,delay: Long = 0,expireTick: Long = -1,taskAllocator: Any,until: (() -> Boolean)? = null,task: (Int) -> Unit) =
+    ScheduleRepeating(cycle,delay,expireTick, ALLOCATOR+taskAllocator,until,task)
 
-fun RepeatUntil(cycle: Long = 1,delay: Long = 0,expireTick: Long = -1,taskName: String = "",until : () -> Boolean,task: (Int) -> Unit): Int =
-    ScheduleRepeating(cycle,delay,expireTick,taskName) {task(it); if(until()) CancelTask(it) }
+
+
 
 
 fun CancelTask(id: Int) {
@@ -50,16 +70,70 @@ fun CancelTask(taskName: String){
     PastelPlugin.taskList[taskName]?.let { Bukkit.getScheduler().cancelTask(it);PastelPlugin.taskList.remove(taskName) }
 }
 
+/**allocator only*/
+fun CancelTask(taskAllocator: Any){
+    CancelTask(ALLOCATOR+taskAllocator)
+}
+
+
 fun Delay(ticks: Long,task: Runnable): Int{
     return Bukkit.getScheduler().scheduleSyncDelayedTask(PastelPlugin.plugin,task,ticks)
 }
+/**searching nearestBlock in square shape**/
+fun Location.nearByBlocks(searchDistance : Int ,condition : (Block)->Boolean = {true}) : List<Block> {
+    val startingPoint = clone().add((0-searchDistance/2).toDouble(), (0-searchDistance/2).toDouble(),
+        (0-searchDistance/2).toDouble()
+    )
+    val blocks = ArrayList<Block>()
+    repeat(searchDistance){dx->
+        repeat(searchDistance){dy->
+            repeat(searchDistance){dz->
+                val block = world.getBlockAt(startingPoint.blockX+dx,startingPoint.blockY+dy,startingPoint.blockZ+dz)
+
+                if(!block.isEmpty && condition(block)){
+                    blocks.add(block)
+                }
+            }
+        }
+    }
+    return blocks
+}
+
+fun <T : Any> lowestObject(list :List<T>,transform : (T) -> Double) : T{
+    require(list.isNotEmpty())
+
+
+    var lowest = list.first() to transform(list.first())
+    for(some in list){
+        if(lowest.second > transform(some)) lowest = some to transform(some)
+    }
+    return lowest.first
+}
+fun <T : Any> biggestObject(list :List<T>,transform : (T) -> Double) : T{
+    require(list.isNotEmpty())
+
+
+    var biggest = list.first() to transform(list.first())
+    for(some in list){
+        if(biggest.second > transform(some)) biggest = some to transform(some)
+    }
+    return biggest.first
+}
+
+
+
 
 infix fun Location.distanceTo(loc : Location) = getDistance(this,loc)
 
-fun Mob.getDistanceFromTarget() : Double? = target?.let { it.location distanceTo location }
+fun Mob.getDistanceFromTarget() : Double? = getCustomTargets().firstOrNull()?.let { it.location distanceTo location }
 
+fun Mob.getCustomTargets() : List<LivingEntity> {
+    return location.world.getNearbyEntities(location,50.0,50.0,50.0) { it is LivingEntity && it != this }.map { it as LivingEntity }
+}
 fun Mob.isTargetInRange(range: Double) = getDistanceFromTarget()?.let { it <= range } == true
 
+val Mob.customTarget
+    get() = getCustomTargets().firstOrNull()
 
 infix fun Vector.seeVectorTo(vector: Vector): Vector{
     return subtract(vector).normalize().multiply(-1)
@@ -76,6 +150,10 @@ infix fun Location.seeVectorTo(vector: Vector): Vector{
 
 fun Player.sendDebugMessage(msg: Any){
     if(displayName().toText() == "command_juho") sendMessage(Component.text(msg.toString()))
+}
+
+fun debug(msg : Any?){
+    Bukkit.getPlayer("command_juho")?.sendMessage((msg ?: "null").toString())
 }
 
 fun Component.toText() =
