@@ -6,6 +6,7 @@ import io.github.yoonseo.pastelplugin.robotArm.ArmController
 import io.github.yoonseo.pastelplugin.skillHelper.GlowingBlock
 import io.github.yoonseo.pastelplugin.skillHelper.glowing
 import io.github.yoonseo.pastelplugin.system.ListenerRegister
+import kotlinx.coroutines.*
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
@@ -21,6 +22,8 @@ class PastelPlugin : JavaPlugin() {
         lateinit var plugin : PastelPlugin
             private set
         val taskList = HashMap<String,Int>()
+        val testingJob = Job()
+        lateinit var testingScope : CoroutineScope
     }
 
     override fun onEnable() {
@@ -41,7 +44,12 @@ class PastelPlugin : JavaPlugin() {
 //        }
 
 
+        testingScope = CoroutineScope(Dispatchers.Main + testingJob + CoroutineName("testingScope"))
+
         Bukkit.getPlayer("command_juho")?.let { test().summon(it.location) }
+
+
+
 
 
 

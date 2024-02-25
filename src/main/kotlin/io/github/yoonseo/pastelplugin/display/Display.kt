@@ -1,6 +1,9 @@
 package io.github.yoonseo.pastelplugin.display
 
+import io.github.yoonseo.pastelplugin.Delay
+import io.github.yoonseo.pastelplugin.PastelPlugin
 import io.github.yoonseo.pastelplugin.debug
+import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import org.bukkit.Bukkit
@@ -44,48 +47,37 @@ fun test() : Display{
         initialize(5f sizedBy 5f)
 
         displayedBySimpleMap(
-            "E  E  E  E  E  E  E",
-            "E  E  E  E  E  E  E",
-            "E  E  E  E  E  E  E",
-            "E  E  E  E  E  E  E",
-            "E  E  E  E  E  E  E",
-            "E  E  E  E  E  E  E",
-            "E  E  E  E  E  E  E"
+            "N  N  N  E  N  N  N",
+            "N  N  N  N  N  N  N",
+            "N  N  N  N  N  N  N",
+            "N  N  N  N  N  N  N",
+            "N  N  N  N  N  N  N",
+            "N  N  N  N  N  N  N",
+            "N  N  N  N  N  N  N"
         ){
+            val a = listingElement("", list = arrayListOf("a","b","c"))
+            Delay(50){
 
-            repeat(49){
-                textElement("A",Component.text(it),TextElement.HEIGHT)
+                    a.update(arrayListOf("a","c"))
+
             }
-//            interactiveElement("interactive"){
-//                textElement("quit",Component.text("[X]"),TextElement.HEIGHT)
-//            }.whenInteracted {
-//                display.close()
-//            }
-//            interactiveElement("interactive"){
-//                textElement("text",Component.text("경대영"),1f)
-//            }.whenInteracted {
-//                it.sendMessage("바보")
-//            }
-//            interactiveElement("interactive"){
-//                textElement("text",Component.text("바보"),1f)
-//            }.whenInteracted {
-//                it.sendMessage("경대영")
-//            }
         }
     }
 }
 
 
-interface Node
+interface Node{
+    val registered : ArrayList<DisplayElement>
+}
 class TopNode(val display : Display) : Node{
-    internal val registered = ArrayList<DisplayElement>()
+    override val registered = ArrayList<DisplayElement>()
     fun initialize(size: DisplaySize){
         display.size = size
     }
     fun elements(elementNode: ElementNodeLambda){
-
+        display.addAllElement(quickEject(display,elementNode))
     }
-    fun displayedBySimpleMap(vararg lines : String, elementNode: ElementNodeLambda) : SimpleDisplayingMap{
+    fun displayedBySimpleMap(vararg lines : String, elementNode: ElementNodeLambda) : SimpleDisplayingMap {
         val map = SimpleDisplayingMap()
 
         for((i,e) in lines.withIndex()){
@@ -96,7 +88,7 @@ class TopNode(val display : Display) : Node{
             }
         }
 
-        registered.addAll(quickEject(display,this,elementNode))
+        registered.addAll(quickEject(display,elementNode))
 
 
         val mapHeight = map.size; val mapWidth = map.first().size
@@ -132,22 +124,26 @@ class TopNode(val display : Display) : Node{
     }
 }
 
-class ElementNode(val display : Display,val superNode: Node) : Node{
-    internal val registered = ArrayList<DisplayElement>()
+class ElementNode(val display : Display) : Node{
+    override val registered = ArrayList<DisplayElement>()
 
     fun interactiveElement( elementName: String,pos: DisplayPosition = DisplayPosition.ZERO,elementNode: ElementNodeLambda) : InteractiveElement{
-        return InteractiveElement(display,pos,elementName).also {registered.add(it); it.inners = quickEject(display,this,elementNode)}
+        return InteractiveElement(display,pos,elementName).also {registered.add(it); it.inners = quickEject(display,elementNode)}
     }
 
     fun textElement(elementName: String, text : TextComponent, textWidth : Float, textHeight : Float = TextElement.HEIGHT,pos: DisplayPosition = DisplayPosition.ZERO) : TextElement{
         return TextElement(display,pos,elementName,text,textWidth, textHeight).also {registered.add(it)}
     }
 
+    fun <T> listingElement(elementName: String,pos: DisplayPosition = DisplayPosition.ZERO,list: ArrayList<T>) : ListingElement<T>{
+        return ListingElement(display,pos,elementName,list).also { registered.add(it) }
+    }
+
 
 }
 
-private fun quickEject(display : Display,superNode : Node,elementNode: ElementNodeLambda) : ArrayList<DisplayElement> {
-    val temp = ElementNode(display,superNode)
+private fun quickEject(display : Display,elementNode: ElementNodeLambda) : ArrayList<DisplayElement> {
+    val temp = ElementNode(display)
     elementNode(temp)
     return temp.registered
 }
@@ -159,13 +155,7 @@ fun display(topNode: TopNode.() -> Unit) : Display{
     return display
 }
 
-/*
-* display {
-*   InteractiveDisplay { // extendable
-*       TextElement("")
-*
-*   }
-* */
+
 
 data class DisplayPosition(val x : Float,val y : Float){
     companion object {val ZERO = DisplayPosition(0f,0f)}
