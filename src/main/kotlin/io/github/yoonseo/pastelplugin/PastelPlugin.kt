@@ -1,10 +1,7 @@
 package io.github.yoonseo.pastelplugin
 
 import io.github.yoonseo.pastelplugin.ThorHammer.ThorHammer
-import io.github.yoonseo.pastelplugin.display.Display
-import io.github.yoonseo.pastelplugin.display.DisplayPosition
-import io.github.yoonseo.pastelplugin.display.InteractiveElement
-import io.github.yoonseo.pastelplugin.display.TextElement
+import io.github.yoonseo.pastelplugin.display.*
 import io.github.yoonseo.pastelplugin.robotArm.ArmController
 import io.github.yoonseo.pastelplugin.skillHelper.GlowingBlock
 import io.github.yoonseo.pastelplugin.skillHelper.glowing
@@ -43,30 +40,13 @@ class PastelPlugin : JavaPlugin() {
 //            ArmController(it)
 //        }
 
-        Display().apply display@{
-            addElement(
-                InteractiveElement(DisplayPosition(1f,1f),"close",
-                    TextElement(DisplayPosition(0f,0f),"closing",Component.text("[X]").color(NamedTextColor.RED),TextElement.HEIGHT)
-                ).apply {
-                    whenInteracted { this@display.close() }
-                }
-            )
-            addElement(
-                InteractiveElement(DisplayPosition(0f,0f),"interaction1",
-                    TextElement(DisplayPosition(0f,0f),"inner1",Component.text("option 1").color(NamedTextColor.GOLD),1f)
-                ).apply {
-                    whenInteracted { it.sendMessage("option 1")}
-                }
-            )
-            addElement(
-                InteractiveElement(DisplayPosition(0f,-TextElement.HEIGHT),"interaction2",
-                    TextElement(DisplayPosition(0f,0f),"inner2",Component.text("option 2").color(NamedTextColor.GOLD),1f)
-                ).apply {
-                    whenInteracted { it.sendMessage("option 2")}
-                }
-            )
-            summon(Bukkit.getPlayer("command_juho")!!.location)
-        }
+
+        Bukkit.getPlayer("command_juho")?.let { test().summon(it.location) }
+
+
+
+
+
         Bukkit.getLogger().info("PastelPlugin is Loaded")
     }
 
