@@ -31,22 +31,14 @@ class PastelPlugin : JavaPlugin() {
         plugin = this
 
 
-        ListenerRegister.registerEvent("$projectPath.itemHandlers.EventHandler")
-        //Bukkit.getPlayer("command_juho")?.let { CustomEntity(Dragon::class).spawn(it.location) }
+        ListenerRegister.registerEvent("$projectPath.itemHandlers.EventHandler")//TODO
 
-        //ListenerRegister.registerAllEvents()
+        ThorHammer().let{
+            command_juho {
+                inventory.addItem(it.getItem())
+            }
+        }
 
-        Bukkit.getPlayer("command_juho")?.inventory?.addItem(ThorHammer().getItem())
-        //Bukkit.getPlayer("command_juho")?.inventory?.addItem(Dash().getItem())
-        //overworld.getBlockAt(-36 ,35 ,30048).glowing(true)
-//        Bukkit.getPlayer("command_juho")?.let {
-//            ArmController(it)
-//        }
-
-
-        testingScope = CoroutineScope(Dispatchers.Main + testingJob + CoroutineName("testingScope"))
-
-        Bukkit.getPlayer("command_juho")?.let { test().summon(it.location) }
 
 
 

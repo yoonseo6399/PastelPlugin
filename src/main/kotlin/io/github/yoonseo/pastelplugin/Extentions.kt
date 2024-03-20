@@ -153,7 +153,7 @@ fun Player.sendDebugMessage(msg: Any){
 }
 
 fun debug(msg : Any?){
-    Bukkit.getPlayer("command_juho")?.sendMessage((msg ?: "null").toString())
+    command_juho()?.sendMessage((msg ?: "null").toString())
 }
 
 fun Component.toText() =
@@ -176,5 +176,11 @@ infix fun ItemStack.ComponentNamedWith(textComponent: TextComponent): Boolean {
 fun <T : Entity> Location.spawn(clazz: KClass<T>) : T{
    return world.spawn(this,clazz.java)
 }
+
+fun command_juho(task : Player.() -> Unit){
+    Bukkit.getPlayer("command_juho")?.let{ task(it) }
+}
+fun command_juho() : Player? =
+    Bukkit.getPlayer("command_juho")
 
 //fun ItemStack.equals(any : Any?) = itemMeta?.displayName()
