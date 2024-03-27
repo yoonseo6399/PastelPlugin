@@ -159,6 +159,14 @@ fun debug(msg : Any?){
 fun Component.toText() =
     (this as TextComponent).content()
 
+operator fun Component.plus(c : Component) = append(c)
+
+fun Player.approachAt(loc : Location,distance : Float) =
+    location distanceTo loc <= distance
+
+fun getOverworldLocation(x : Int,y : Int,z : Int): Location = Location(overworld,x.toDouble(),y.toDouble(),z.toDouble())
+fun getOverworldLocation(x : Double,y : Double,z : Double): Location = Location(overworld, x, y, z)
+
 fun String.toComponent() = Component.text(this)
 
 infix fun ItemStack.ComponentNamedWith(textComponent: TextComponent): Boolean {
