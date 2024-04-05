@@ -4,6 +4,7 @@ package io.github.yoonseo.pastelplugin
 
 
 import getDistance
+import kotlinx.coroutines.delay
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.TranslatableComponent
@@ -68,6 +69,21 @@ fun CancelTask(id: Int) {
 }
 fun CancelTask(taskName: String){
     PastelPlugin.taskList[taskName]?.let { Bukkit.getScheduler().cancelTask(it);PastelPlugin.taskList.remove(taskName) }
+}
+
+fun List<Component>.mergeWithSeparator(separator : Component) : Component{
+    val component = Component.empty()
+    forEach {
+        component + it + separator
+    }
+    return component
+}
+
+suspend inline fun waitForCondition(condition: () -> Boolean){
+    while (true){
+        if(condition()) break
+        delay(500L)
+    }
 }
 
 /**allocator only*/

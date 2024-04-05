@@ -1,5 +1,7 @@
 
 import org.bukkit.Location
+import org.bukkit.Material
+import org.bukkit.block.Block
 import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
@@ -36,7 +38,18 @@ object RayCast {
         }
         return null
     }
-
+    inline fun <reified T : Block> runBlock(startingPoint: Location, direction: Vector, range: Double): T? {
+        val location = startingPoint.clone()
+        var distance = 0.0
+        direction.multiply(0.25)
+        val world = location.world
+        while (distance < range){
+            location.add(direction)
+            distance += 0.25
+            world.getBlockAt(location).takeIf { it is T && it.type != Material.AIR}?.let { return it as T }
+        }
+        return null
+    }
 
 
 }

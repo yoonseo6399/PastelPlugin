@@ -4,7 +4,8 @@ import io.github.yoonseo.pastelplugin.ThorHammer.ThorHammer
 //import io.github.yoonseo.pastelplugin.commands.PastelPluginCommand
 import io.github.yoonseo.pastelplugin.display.*
 import io.github.yoonseo.pastelplugin.robotArm.ArmController
-import io.github.yoonseo.pastelplugin.rpg.Quests
+import io.github.yoonseo.pastelplugin.rpg.moster.Monster
+import io.github.yoonseo.pastelplugin.rpg.moster.impls.*
 import io.github.yoonseo.pastelplugin.skillHelper.GlowingBlock
 import io.github.yoonseo.pastelplugin.skillHelper.glowing
 import io.github.yoonseo.pastelplugin.system.ListenerRegister
@@ -48,8 +49,12 @@ class PastelPlugin : JavaPlugin() {
         //Bukkit.getOnlinePlayers().forEach{
         //    Quests.starting().start(it)
         //}
-        command_juho()?.let { Quests.mineCoal().start(it) }
-        Bukkit.getPlayer("Cube_x2")?.let { Quests.starting().start(it) }
+        //command_juho()?.let { Quests.mineCoal().start(it) }
+
+
+        Bukkit.getPlayer("Cube_x2")?.let {
+            Monster.spawn(Wolf::class,it.location)
+        }
 
 
 
