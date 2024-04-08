@@ -1,34 +1,19 @@
-package io.github.yoonseo.pastelplugin.rpg
+package io.github.yoonseo.pastelplugin.rpg.quest
 
-import io.github.yoonseo.pastelplugin.*
-import io.github.yoonseo.pastelplugin.rpg.moster.Monster
+
+import io.github.yoonseo.pastelplugin.mergeWithSeparator
+import io.github.yoonseo.pastelplugin.plus
+import io.github.yoonseo.pastelplugin.waitForCondition
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.event.ClickEvent
-import org.bukkit.Location
 import org.bukkit.entity.Player
 
-
-class ConditionNode {
-    var obtain: (Player.(Quest)->Boolean) = { true }
-    var approachAt: (Player.(Quest)->Boolean) = { true }
-    var kill: (Player.(Quest)->Boolean) = { true }
-    fun obtain(){
-
-    }
-    fun approachAt(loc: Location,distance: Float){
-
-    }
-    fun kill(monster: Monster<*>,amount: Int){
-
-    }
-    val condition : Player.(Quest)->Boolean
-        get() = { obtain(this,it) && approachAt(this,it) && kill(this,it) }
-}
 
 class ConversationNode{
     private val conversation = arrayListOf<Component>()
     private var optionalNode : OptionalNode? = null
+    private var executes : ExecutableNode? = null
     fun Npc.talk(message: Component){
         conversation.add(name + Component.text(" ") + message)
     }
@@ -38,17 +23,23 @@ class ConversationNode{
         optionNode(optionalNode!!)
     }
 
+    fun executes(executableNode: ExecutableNode.() -> Unit){
+
+    }
+
     suspend fun print(player: Player){
         conversation.printTo(player)
         optionalNode?.optionPrintAndAwait(player)
-
+        executes?.invoke()
     }
 }
-class OptionalNode {
-    val options = hashMapOf<Component,ConversationNode>()
-    var isChosen = false
 
-    fun choice(choiceName: Component,node : ConversationNode.()->Unit){
+class OptionalNode {
+    val options = hashMapOf<Component, ConversationNode>()
+    var isChosen = false
+    var chosenOption : ConversationNode? = null
+
+    fun choice(choiceName: Component, node : ConversationNode.()->Unit){
         options[choiceName] = ConversationNode().also {node(it)}
     }
 
@@ -59,28 +50,17 @@ class OptionalNode {
 
         player.sendMessage(optionalComponents.mergeWithSeparator(Component.text(" ")))
 
+        QuestCommand.addOptionalQuest(player,this)
         waitForCondition {
             isChosen
         }
+        chosenOption!!.print(player)
     }
 
-    suspend fun choose(player: Player, optionName : String){
+    fun choose(optionName : String){
         options.mapNotNull {
             entry -> (entry.key as? TextComponent)?.content()?.let { it to entry.value  }
-        }.toMap()[optionName]?.print(player)
+        }.toMap()[optionName]?.let { chosenOption = it }
         isChosen = true
     }
 }
-data class Npc(val name : Component){
-
-}
-val a = Npc(Component.text("a"))
-val c : ConversationNode.()->Unit = {
-    a.talk(Component.text("a"))
-    option {
-        choice(Component.text("bb")){
-
-        }
-    }
-}
-

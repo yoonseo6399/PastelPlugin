@@ -2,18 +2,16 @@ package io.github.yoonseo.pastelplugin
 
 import io.github.yoonseo.pastelplugin.ThorHammer.ThorHammer
 //import io.github.yoonseo.pastelplugin.commands.PastelPluginCommand
-import io.github.yoonseo.pastelplugin.display.*
-import io.github.yoonseo.pastelplugin.robotArm.ArmController
+import io.github.yoonseo.pastelplugin.rpg.quest.impl.Quests
 import io.github.yoonseo.pastelplugin.rpg.moster.Monster
 import io.github.yoonseo.pastelplugin.rpg.moster.impls.*
+import io.github.yoonseo.pastelplugin.rpg.quest.QuestCommand
+
 import io.github.yoonseo.pastelplugin.skillHelper.GlowingBlock
 import io.github.yoonseo.pastelplugin.skillHelper.glowing
 import io.github.yoonseo.pastelplugin.system.ListenerRegister
 import kotlinx.coroutines.*
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
-import org.bukkit.block.Block
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
 import kotlin.collections.HashMap
@@ -32,7 +30,7 @@ class PastelPlugin : JavaPlugin() {
     override fun onEnable() {
         // Plugin startup logic
         plugin = this
-
+        getCommand("quest")!!.setExecutor(QuestCommand())
 
         ListenerRegister.registerEvent("$projectPath.itemHandlers.EventHandler")
 
@@ -43,6 +41,7 @@ class PastelPlugin : JavaPlugin() {
         ThorHammer().let{
             command_juho {
                 inventory.addItem(it.getItem())
+                Quests.starting().start(this)
             }
         }
 

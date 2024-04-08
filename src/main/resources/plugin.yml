@@ -9,3 +9,5 @@ commands:
     aliases:
       - pp
     description: "pastelplugin commands"
+  quest:
+    description: "quest"

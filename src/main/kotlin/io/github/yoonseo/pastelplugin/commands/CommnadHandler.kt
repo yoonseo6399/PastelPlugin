@@ -15,6 +15,7 @@ abstract class CommandHandler(
 
     override fun onCommand(p0: CommandSender, p1: Command, p2: String, p3: Array<out String>?): Boolean {
         //return onCommand(p0)
+        return true
     }
     abstract fun onCommand(sender: CommandSender,argumentMap : HashMap<String,Any>)
 
