@@ -1,6 +1,7 @@
 package io.github.yoonseo.pastelplugin.rpg.quest
 
 import io.github.monun.heartbeat.coroutines.HeartbeatScope
+import io.github.yoonseo.pastelplugin.debug
 import io.github.yoonseo.pastelplugin.plus
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -16,15 +17,11 @@ class Quest {
     lateinit var player : Player
 
     val sessions = ArrayList<QuestSession>()
+    var nextQuest : Quest? = null
     companion object;
 
     lateinit var questName : Component
-    fun showQuestScreen(){
-        player.sendMessage(Component.text("----------------------").color(NamedTextColor.WHITE)+Component.text("[ Quest ]").color(NamedTextColor.GOLD)+Component.text("----------------------").color(NamedTextColor.WHITE))
-        player.sendMessage("")
-        player.sendMessage(questName)
-        player.sendMessage("","----------------------------------------------------")
-    }
+
 
     fun start(player: Player){
         this.player = player
@@ -32,9 +29,11 @@ class Quest {
             //showQuestScreen()
             while (true){
                 sessions.minBy { it.session.order }.startSession(player)
-                if(sessions.minOf { it.session.order } == Session.End.order){
+                if(sessions.minOf { it.session.order }.also { debug(it) } == Session.End.order){
+                    nextQuest?.start(player)
                     break
                 }
+                sessions.remove(sessions.minBy { it.session.order })
             }
 
         }

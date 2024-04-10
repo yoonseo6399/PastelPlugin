@@ -11,3 +11,4 @@ commands:
     description: "pastelplugin commands"
   quest:
     description: "quest"
+  monster:

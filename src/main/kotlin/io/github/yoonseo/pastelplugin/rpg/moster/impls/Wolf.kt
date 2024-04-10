@@ -9,7 +9,7 @@ import kotlin.reflect.KClass
 
 class Wolf : Monster<org.bukkit.entity.Wolf>(){
     override var stats: MonsterStat = MonsterStat(
-        1,//레벨
+        20,//레벨
         1.0,//힘
         1.5,//래밸당 힘 증가량
         15.0,//체력

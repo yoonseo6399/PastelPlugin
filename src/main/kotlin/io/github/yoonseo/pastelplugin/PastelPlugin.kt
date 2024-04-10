@@ -4,6 +4,7 @@ import io.github.yoonseo.pastelplugin.ThorHammer.ThorHammer
 //import io.github.yoonseo.pastelplugin.commands.PastelPluginCommand
 import io.github.yoonseo.pastelplugin.rpg.quest.impl.Quests
 import io.github.yoonseo.pastelplugin.rpg.moster.Monster
+import io.github.yoonseo.pastelplugin.rpg.moster.MonsterCommand
 import io.github.yoonseo.pastelplugin.rpg.moster.impls.*
 import io.github.yoonseo.pastelplugin.rpg.quest.QuestCommand
 
@@ -31,6 +32,8 @@ class PastelPlugin : JavaPlugin() {
         // Plugin startup logic
         plugin = this
         getCommand("quest")!!.setExecutor(QuestCommand())
+        getCommand("monster")!!.setExecutor(MonsterCommand())
+
 
         ListenerRegister.registerEvent("$projectPath.itemHandlers.EventHandler")
 

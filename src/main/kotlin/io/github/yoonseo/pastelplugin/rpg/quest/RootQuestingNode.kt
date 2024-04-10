@@ -6,4 +6,7 @@ class RootQuestingNode(val quest: Quest) {
         node(QuestingNode(session))
         quest.sessions.add(session)
     }
+    fun next(quest: Quest) {
+        quest.nextQuest = quest
+    }
 }

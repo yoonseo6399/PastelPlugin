@@ -28,8 +28,6 @@ abstract class Monster<E : Mob> {
         fun <E : Mob,T : io.github.yoonseo.pastelplugin.rpg.moster.Monster<E>> spawn(monster: KClass<T>,loc : Location) : T{
             val instance = monster.constructors.first().call()
 
-            monster.memberFunctions.map { it.name }.forEach { debug(it) }
-            debug("end")
             monster.memberFunctions.find { it.name.contains("spawn") }!!.call(instance,loc)
             return instance
         }
@@ -56,12 +54,12 @@ abstract class Monster<E : Mob> {
             fun whenAttacked(e: EntityDamageByEntityEvent){
                 if(e.entity == mob) {
                     e.damage /= (1 + (0.03 * stats.getLeveledDefense()))
-                    debug(e.damage)
+                    //debug(e.damage)
                 }
                 if(e.damager == mob) {
                     e.damage += e.damage*(0.03 * stats.getLeveledStrength())
-                    debug(e.damage)
-                    debug(stats.getLeveledStrength())
+                    //debug(e.damage)
+                    //debug(stats.getLeveledStrength())
                 }
             }
         },PastelPlugin.plugin)

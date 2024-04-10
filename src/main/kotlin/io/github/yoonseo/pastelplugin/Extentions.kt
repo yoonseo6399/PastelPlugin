@@ -72,9 +72,9 @@ fun CancelTask(taskName: String){
 }
 
 fun List<Component>.mergeWithSeparator(separator : Component) : Component{
-    val component = Component.empty()
+    var component = Component.empty()
     forEach {
-        component + it + separator
+        component = component.append(it).append(separator)
     }
     return component
 }
