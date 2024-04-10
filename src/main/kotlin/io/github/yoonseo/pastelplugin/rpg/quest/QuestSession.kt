@@ -18,6 +18,3 @@ data class QuestSession(val quest: Quest, val session: Session){
     }
 }
 
-enum class Session(val order: Int){
-    Begin(1),Middle(500),End(1000)
-}

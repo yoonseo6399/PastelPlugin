@@ -29,6 +29,7 @@ class Quest {
     fun start(player: Player){
         this.player = player
         HeartbeatScope().launch {
+            //showQuestScreen()
             while (true){
                 sessions.minBy { it.session.order }.startSession(player)
                 if(sessions.minOf { it.session.order } == Session.End.order){
@@ -42,11 +43,11 @@ class Quest {
 
 fun Quest.Companion.create(questName : Component,node : RootQuestingNode.() -> Unit) = Quest().also { it.questName = questName;node(RootQuestingNode(it)) }
 
-suspend fun Conversation.printTo(player: Player)=
-        forEach {
-            player.sendMessage(it)
-            delay(1000L)
-        }
+suspend fun Conversation.printTo(player: Player) =
+    forEach {
+        player.sendMessage(it)
+        delay(1000L)
+    }
 
 
 

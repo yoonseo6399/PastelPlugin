@@ -23,7 +23,6 @@ repositories {
 dependencies {
     compileOnly "io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT"
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.0-Beta")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.4")
@@ -51,9 +50,9 @@ tasks.withType(JavaCompile).configureEach {
 
 shadowJar {
 
-    //dependencies {
-    //    exclude('io.github.monun:kommand-api:3.1.7')
-    //}
+    dependencies {
+        exclude('io.github.monun:kommand-api:3.1.7')
+    }
     archiveBaseName.set('PastelPlugin')
     archiveClassifier.set('')
     archiveVersion.set(version.toString())
