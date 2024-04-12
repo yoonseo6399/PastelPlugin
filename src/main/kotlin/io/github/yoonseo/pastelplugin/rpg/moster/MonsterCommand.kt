@@ -12,17 +12,19 @@ import kotlin.reflect.KClass
 class MonsterCommand : CommandExecutor {
     override fun onCommand(p0: CommandSender, p1: Command, p2: String, p3: Array<out String>?): Boolean {
         if(p3 != null){
-            if(p3.size == 3){
+            if(p3.size >= 3){
+                var level = if(p3.size == 4) p3[3].toIntOrNull() ?: 1 else 1
+
                 when(p3[1]){
                     "Slime" -> repeat(p3[2].toInt()){
-                        Monster.spawn(Slime::class,(p0 as Player).location)
+                        Monster.spawn(Slime::class,(p0 as Player).location, level)
                     }
                     "Wolf" -> repeat(p3[2].toInt()){
-                        Monster.spawn(Wolf::class,(p0 as Player).location)
+                        Monster.spawn(Wolf::class,(p0 as Player).location, level)
 
                     }
                     "Goblin" -> repeat(p3[2].toInt()){
-                        Monster.spawn(Goblin::class,(p0 as Player).location)
+                        Monster.spawn(Goblin::class,(p0 as Player).location, level)
                     }
                 }
 

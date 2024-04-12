@@ -29,7 +29,7 @@ class Quest {
             //showQuestScreen()
             while (true){
                 sessions.minBy { it.session.order }.startSession(player)
-                if(sessions.minOf { it.session.order }.also { debug(it) } == Session.End.order){
+                if(sessions.minOf { it.session.order } == Session.End.order){
                     nextQuest?.start(player)
                     break
                 }

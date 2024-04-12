@@ -8,7 +8,10 @@ import kotlinx.coroutines.delay
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.TranslatableComponent
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.entity.Entity
@@ -135,7 +138,42 @@ fun <T : Any> biggestObject(list :List<T>,transform : (T) -> Double) : T{
     }
     return biggest.first
 }
+fun String.toComponent(): TextComponent {
+    val input = this
+    var component = Component.empty()
+    var currentText = StringBuilder()
+    var lastColor: TextColor? = null
 
+    for (char in input.toCharArray()) {
+        if (char == '&') {
+            if (currentText.isNotEmpty()) {
+                component = component.append(Component.text(currentText.toString(), lastColor))
+                currentText = StringBuilder()
+            }
+        } else {
+            currentText.append(char)
+        }
+
+        if (char == '&') continue
+
+        val color = ChatColor.getByChar(char)
+        if (color != null) {
+            lastColor = NamedTextColor.NAMES.value(color.name) ?: lastColor
+            continue
+        }
+
+        val colorCode = ChatColor.getByChar('&')
+        if (colorCode != null) {
+            lastColor = NamedTextColor.NAMES.value(colorCode.name) ?: lastColor
+        }
+    }
+
+    if (currentText.isNotEmpty()) {
+        component = component.append(Component.text(currentText.toString(), lastColor))
+    }
+
+    return component
+}
 
 
 
@@ -183,7 +221,7 @@ fun Player.approachAt(loc : Location,distance : Float) =
 fun getOverworldLocation(x : Int,y : Int,z : Int): Location = Location(overworld,x.toDouble(),y.toDouble(),z.toDouble())
 fun getOverworldLocation(x : Double,y : Double,z : Double): Location = Location(overworld, x, y, z)
 
-fun String.toComponent() = Component.text(this)
+//fun String.toComponent() = Component.text(this)
 
 infix fun ItemStack.ComponentNamedWith(textComponent: TextComponent): Boolean {
     val com1 = this.itemMeta?.displayName() ?: return false

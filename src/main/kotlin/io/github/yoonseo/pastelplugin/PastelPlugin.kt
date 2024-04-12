@@ -11,6 +11,7 @@ import io.github.yoonseo.pastelplugin.rpg.quest.QuestCommand
 import io.github.yoonseo.pastelplugin.skillHelper.GlowingBlock
 import io.github.yoonseo.pastelplugin.skillHelper.glowing
 import io.github.yoonseo.pastelplugin.system.ListenerRegister
+import io.github.yoonseo.pastelplugin.valorant.chamber.TourDeForce
 import kotlinx.coroutines.*
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
@@ -44,6 +45,7 @@ class PastelPlugin : JavaPlugin() {
         ThorHammer().let{
             command_juho {
                 inventory.addItem(it.getItem())
+                inventory.addItem(TourDeForce().getItem())
                 Quests.starting().start(this)
             }
         }

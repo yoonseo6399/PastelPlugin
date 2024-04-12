@@ -2,8 +2,11 @@ package io.github.yoonseo.pastelplugin.rpg.quest
 
 
 import io.github.yoonseo.pastelplugin.plus
+import io.github.yoonseo.pastelplugin.toComponent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.minimessage.MiniMessage
+import net.md_5.bungee.api.ChatColor
 import org.bukkit.entity.Player
 
 
@@ -15,13 +18,13 @@ class ConversationNode{
         conversation.add(Component.text("[ ") + name + Component.text(" ] ") + message)
     }
     fun Npc.talk(message: String){
-        talk(Component.text(message))
+        talk(message.toComponent())
     }
     fun tell(message: Component){
         conversation.add(message)
     }
     fun tell(message: String){
-        tell(Component.text(message))
+        tell(message.toComponent())
     }
     fun QuestScreen(message: Component){
         conversation.add(

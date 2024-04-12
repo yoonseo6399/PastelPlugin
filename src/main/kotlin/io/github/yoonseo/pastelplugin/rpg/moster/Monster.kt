@@ -25,8 +25,9 @@ import kotlin.reflect.full.memberFunctions
 
 abstract class Monster<E : Mob> {
     companion object{
-        fun <E : Mob,T : io.github.yoonseo.pastelplugin.rpg.moster.Monster<E>> spawn(monster: KClass<T>,loc : Location) : T{
+        fun <E : Mob,T : io.github.yoonseo.pastelplugin.rpg.moster.Monster<E>> spawn(monster: KClass<T>,loc : Location,level: Int = 1) : T{
             val instance = monster.constructors.first().call()
+            instance.stats.level = level
 
             monster.memberFunctions.find { it.name.contains("spawn") }!!.call(instance,loc)
             return instance
@@ -53,7 +54,7 @@ abstract class Monster<E : Mob> {
             @EventHandler(priority = EventPriority.HIGHEST)
             fun whenAttacked(e: EntityDamageByEntityEvent){
                 if(e.entity == mob) {
-                    e.damage /= (1 + (0.03 * stats.getLeveledDefense()))
+                    e.damage -= e.damage/(0.03 * stats.getLeveledDefense())
                     //debug(e.damage)
                 }
                 if(e.damager == mob) {
@@ -112,7 +113,7 @@ abstract class Monster<E : Mob> {
 }
 
 data class MonsterStat(
-    val level: Int,
+    var level: Int,
     val strength : Double,
     val strengthMultiplier: Double,
     val health : Double,

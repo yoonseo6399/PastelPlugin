@@ -23,7 +23,7 @@ object Quests{
                 approachAt(woodHunter.loc,10f)
             }
             conversation {
-                tell("아버지:아들아 진짜 갈꺼니?.....")
+                tell("아버지:&c아들아 진짜 갈꺼니?.....")
                 tell("나:네 아버지 저는 개쩌는 모험가가 될꺼에요!")
                 tell("아버지:그래....아들아 꼭 살아 돌아 오거라...")
                 tell("나:예 아버지!")

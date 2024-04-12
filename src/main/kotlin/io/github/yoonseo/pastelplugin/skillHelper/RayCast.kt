@@ -1,4 +1,5 @@
 
+import io.github.yoonseo.pastelplugin.debug
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
@@ -23,16 +24,25 @@ object RayCast {
         }
         return null
     }
-    inline fun <reified T : Entity> runWithCode(startingPoint: Location, direction: Vector, detectionRange: Double, range: Double,crossinline except: (Entity) -> Boolean = {false},code : (Location) -> Unit): List<T>? {
+    inline fun <reified T : Entity> runWithCode(startingPoint: Location, direction: Vector, detectionRange: Double, range: Double, crossinline except: (Entity) -> Boolean = {false}, code : (Location) -> Unit): List<T>? {
         val location = startingPoint.clone()
         var distance = 0.0
-        direction.multiply(0.25)
+        val directionn = direction.clone().multiply(0.25)
         val world = location.world
         while (distance < range){
-            code(location)
-            location.add(direction)
+            code(location.clone())
+
+            //debug("nomalrun $location + $directionn = ${location.add(directionn).also { location = it }}")
+            location.add(directionn)
             distance += 0.25
-            val get = world.getNearbyEntities(location,detectionRange,detectionRange,detectionRange) { it is T && !except(it) }
+            val get = try {
+                world.getNearbyEntities(location,detectionRange,detectionRange,detectionRange) { it is T && !except(it) }
+            }catch (e : IllegalArgumentException){
+                debug("Error")
+                e.printStackTrace()
+                return null
+            }
+            //debug(distance)
             @Suppress("UNCHECKED_CAST")
             if(!get.isEmpty()) return get as List<T>
         }
