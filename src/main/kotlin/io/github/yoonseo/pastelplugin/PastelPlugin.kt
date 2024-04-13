@@ -1,6 +1,7 @@
 package io.github.yoonseo.pastelplugin
 
 import io.github.yoonseo.pastelplugin.ThorHammer.ThorHammer
+import io.github.yoonseo.pastelplugin.rpg.magic.earth.Valagart
 //import io.github.yoonseo.pastelplugin.commands.PastelPluginCommand
 import io.github.yoonseo.pastelplugin.rpg.quest.impl.Quests
 import io.github.yoonseo.pastelplugin.rpg.moster.Monster
@@ -46,6 +47,7 @@ class PastelPlugin : JavaPlugin() {
             command_juho {
                 inventory.addItem(it.getItem())
                 inventory.addItem(TourDeForce().getItem())
+                inventory.addItem(Valagart().getItem())
                 Quests.starting().start(this)
             }
         }

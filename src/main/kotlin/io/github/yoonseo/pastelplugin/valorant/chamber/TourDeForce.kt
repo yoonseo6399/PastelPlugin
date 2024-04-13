@@ -11,6 +11,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import org.bukkit.Material
 import org.bukkit.Particle
+import org.bukkit.Sound
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerItemHeldEvent
@@ -27,9 +28,9 @@ class TourDeForce : AbstractCustomItem() {
             require(Requires.LEFT_CLICK)
             val direction = e.player.location.direction
             val location = e.player.location
-            RayCast.runWithCode<LivingEntity>(e.player.location,e.player.location.direction,0.0,100.0,{ it == e.player }){loc ->
+            RayCast.runWithCode<LivingEntity>(e.player.eyeLocation,e.player.location.direction,0.0,100.0,{ it == e.player }){loc ->
                 val distance = loc distanceTo e.player.location
-                val circleingVec = direction.clone().crossProduct(Vector(1,0,0)).multiply(0.25).rotateAroundAxis(direction,distance)
+                val circleingVec = direction.clone().crossProduct(Vector(direction.z,direction.x,-direction.y)).multiply(0.25).rotateAroundAxis(direction,distance)
                 val circleingPoint = loc.clone().add(circleingVec)
                 val circleingPoint2 = loc.clone().add(circleingVec.multiply(-1))
 
@@ -45,9 +46,13 @@ class TourDeForce : AbstractCustomItem() {
 
                 //loc.world.spawnParticle(Particle.DRAGON_BREATH,loc,1,0.0,0.0,0.0,0.0)
             }?.firstOrNull()?.apply {
-                damage(10.0)
+                damage(10.0,e.player)
                 debug(this)
             }
+            location.world.playSound(location, Sound.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR,1f,0.1f)
+            location.world.playSound(location, Sound.BLOCK_CONDUIT_ATTACK_TARGET,1f,1f)
+            location.world.playSound(location, Sound.BLOCK_TRIAL_SPAWNER_SPAWN_MOB,1f,0.1f)
+
         }
     }
 
