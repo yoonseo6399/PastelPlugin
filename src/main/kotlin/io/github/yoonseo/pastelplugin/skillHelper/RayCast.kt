@@ -1,4 +1,5 @@
 
+import com.google.common.base.Predicate
 import io.github.yoonseo.pastelplugin.debug
 import org.bukkit.Location
 import org.bukkit.Material
@@ -7,7 +8,7 @@ import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.util.Vector
-
+@Deprecated(message = "it will replaced with Selector and other thing", level = DeprecationLevel.WARNING)
 object RayCast {
 
     inline fun <reified T : Entity> run(startingPoint: Location, direction: Vector, detectionRange: Double, range: Double,crossinline except: (Entity) -> Boolean = {false}): List<T>? {
@@ -48,7 +49,7 @@ object RayCast {
         }
         return null
     }
-    inline fun <reified T : Block> runBlock(startingPoint: Location, direction: Vector, range: Double): T? {
+    inline fun <reified T : Block> runBlock(startingPoint: Location, direction: Vector, range: Double,predicate: (T) -> Boolean = {true}): T? {
         val location = startingPoint.clone()
         var distance = 0.0
         direction.multiply(0.25)

@@ -88,7 +88,10 @@ class MapContext(val map: Map<String,String>) {
 }
 
 fun <T : Any> String.toType(kClass: KClass<T>): T {
-    return when (kClass.simpleName) {
+    return toType(kClass.simpleName) as T
+}
+fun String.toType(string : String?): Any{
+    return when (string) {
 
         "Int" -> this.toInt()
         "Long" -> this.toLong()
@@ -107,5 +110,5 @@ fun <T : Any> String.toType(kClass: KClass<T>): T {
 
 
         else -> throw ClassCastException("Cannot cast String to type, Maybe Command's declaration's problem, Requesting Type Must be default type(example. Int,String ---)")
-    } as T
+    }
 }

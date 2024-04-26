@@ -5,7 +5,7 @@ import io.github.yoonseo.pastelplugin.toComponent
 import net.kyori.adventure.text.TextComponent
 import org.bukkit.Material
 
-class Dash : AbstractCustomItem() {
+class  Dash : AbstractCustomItem() {
     override val name: TextComponent = "데쉬".toComponent()
     override val itemType: Material = Material.MAGENTA_GLAZED_TERRACOTTA
 

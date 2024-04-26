@@ -47,7 +47,6 @@ class TourDeForce : AbstractCustomItem() {
                 //loc.world.spawnParticle(Particle.DRAGON_BREATH,loc,1,0.0,0.0,0.0,0.0)
             }?.firstOrNull()?.apply {
                 damage(10.0,e.player)
-                debug(this)
             }
             location.world.playSound(location, Sound.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR,1f,0.1f)
             location.world.playSound(location, Sound.BLOCK_CONDUIT_ATTACK_TARGET,1f,1f)

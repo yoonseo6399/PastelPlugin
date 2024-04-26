@@ -118,6 +118,16 @@ fun Location.nearByBlocks(searchDistance : Int ,condition : (Block)->Boolean = {
     return blocks
 }
 
+fun <T : Any?> List<List<T>>.intoOneList() : List<T>{
+    var list = ArrayList<T>()
+    forEach { tList ->
+        tList.forEach {
+            list.add(it)
+        }
+    }
+    return list
+}
+
 fun <T : Any> lowestObject(list :List<T>,transform : (T) -> Double) : T{
     require(list.isNotEmpty())
 

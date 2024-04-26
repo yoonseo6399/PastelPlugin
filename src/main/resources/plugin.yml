@@ -12,3 +12,6 @@ commands:
   quest:
     description: "quest"
   monster:
+  setvalue:
+    usage: "/setvalue <Property Name> <Value> <Type> | 타입이 일치하지 않거나 값이 잘못되었습니다"
+    description: "/setvalue <Property Name> <Value> <Type> | 타입이 일치하지 않거나 값이 잘못되었습니다"

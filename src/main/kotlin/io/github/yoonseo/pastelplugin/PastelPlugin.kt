@@ -1,12 +1,15 @@
 package io.github.yoonseo.pastelplugin
 
+import io.github.monun.heartbeat.coroutines.HeartbeatScope
 import io.github.yoonseo.pastelplugin.ThorHammer.ThorHammer
+import io.github.yoonseo.pastelplugin.lib.AdjustableValueCommand
+import io.github.yoonseo.pastelplugin.rpg.magic.RedGloom.Explosion
+import io.github.yoonseo.pastelplugin.rpg.magic.earth.RollingThunder
 import io.github.yoonseo.pastelplugin.rpg.magic.earth.Valagart
+import io.github.yoonseo.pastelplugin.rpg.magic.fire.Fireball
+import io.github.yoonseo.pastelplugin.rpg.magic.ice.Friche
 //import io.github.yoonseo.pastelplugin.commands.PastelPluginCommand
-import io.github.yoonseo.pastelplugin.rpg.quest.impl.Quests
-import io.github.yoonseo.pastelplugin.rpg.moster.Monster
 import io.github.yoonseo.pastelplugin.rpg.moster.MonsterCommand
-import io.github.yoonseo.pastelplugin.rpg.moster.impls.*
 import io.github.yoonseo.pastelplugin.rpg.quest.QuestCommand
 
 import io.github.yoonseo.pastelplugin.skillHelper.GlowingBlock
@@ -16,6 +19,7 @@ import io.github.yoonseo.pastelplugin.valorant.chamber.TourDeForce
 import kotlinx.coroutines.*
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
+import java.io.File
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -35,33 +39,20 @@ class PastelPlugin : JavaPlugin() {
         plugin = this
         getCommand("quest")!!.setExecutor(QuestCommand())
         getCommand("monster")!!.setExecutor(MonsterCommand())
-
+        getCommand("setvalue")!!.setExecutor(AdjustableValueCommand())
 
         ListenerRegister.registerEvent("$projectPath.itemHandlers.EventHandler")
 
-        //getCommand("pastelplugin")?.setExecutor(PastelPluginCommand())
-
-        //ListenerRegister.registerEvent("$projectPath.chair.EventHandler")//TODO
-
-        ThorHammer().let{
-            command_juho {
-                inventory.addItem(it.getItem())
-                inventory.addItem(TourDeForce().getItem())
-                inventory.addItem(Valagart().getItem())
-                Quests.starting().start(this)
-            }
+        TourDeForce()
+        ThorHammer()
+        Valagart()
+        Friche()
+        Fireball()
+        command_juho {
+            inventory.addItem(RollingThunder().getItem())
         }
 
-        //Bukkit.getOnlinePlayers().forEach{
-        //    Quests.starting().start(it)
-        //}
-        //command_juho()?.let { Quests.mineCoal().start(it) }
-
-
-        Bukkit.getPlayer("Cube_x2")?.let {
-            Monster.spawn(Wolf::class,it.location)
-        }
-
+        autoReload()
 
 
 
@@ -76,6 +67,25 @@ class PastelPlugin : JavaPlugin() {
         // Plugin shutdown logic
         val keys = HashSet(GlowingBlock.onGlowing.keys)
         keys.forEach { debug(it); it.glowing(false) }
+    }
+
+
+    fun autoReload(){
+        val file = File("/Users/yoonseo/Desktop/경제서버_시즌_3/plugins/PastelPlugin-1.0-SNAPSHOT.jar")
+        val lastMod = file.lastModified()
+        HeartbeatScope().launch {
+            while (true){
+                val curMod = file.lastModified()
+
+                if(lastMod != curMod){
+                    delay(1000)
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"pm reload PastelPlugin")
+                    debug("Auto Reloaded pastelPlugin!!")
+                }
+                delay(1000)
+            }
+
+        }
     }
 }
 

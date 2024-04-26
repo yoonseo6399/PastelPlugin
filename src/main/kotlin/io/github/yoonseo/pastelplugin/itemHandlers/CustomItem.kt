@@ -16,8 +16,12 @@ import java.lang.RuntimeException
 
 
 abstract class AbstractCustomItem : CustomItem {
+    companion object{
+        val list = ArrayList<AbstractCustomItem>()
+    }
     init {
         register()
+        list.add(this)
     }
 
     override val lores: ArrayList<Component?> = ArrayList()
