@@ -2,6 +2,7 @@ package io.github.yoonseo.pastelplugin.lib.simpleSpell
 
 import getEntityColludeWithLocation
 import io.github.monun.heartbeat.coroutines.HeartbeatScope
+import io.github.yoonseo.pastelplugin.debug
 import io.github.yoonseo.pastelplugin.getOverworldLocation
 import io.github.yoonseo.pastelplugin.intoOneList
 import kotlinx.coroutines.CoroutineScope
@@ -75,35 +76,39 @@ data class CircleBuilder(var center : Location, var range : Double, var rotatedB
         return Circle(center,rotatedByAxis,range)
     }
 }
-class SpellShapeWithBehavior<S : AbstractedSpellShape>(val behavior: Behavior<S,S>, var shape : S) : SpellShape by shape {
+class SpellShapeWithBehavior<S : AbstractedSpellShape>(val behavior: Behavior<S,Unit>, val shape : S) : SpellShape by shape {
     fun activateDelta(callBack: (S) -> Unit){
         behavior.runByCallBack(shape){
-            shape = it
-            callBack(it)
+            callBack(shape)
         }
     }
 }
-class Behavior<T : Any,E : Any>(val block: suspend CoroutineScope.(T) -> E,val period: Int){
+class Behavior<T : Any,E : Any>(val block: suspend CoroutineScope.(T) -> E,val times: Int){
     private var isActive = false
-    fun runByCallBack(value : T,callBack : (E) -> Unit){
-        if(!isActive) return
+    fun runByCallBack(value : T,callBack : (T) -> Unit){
+        if(isActive) return
+        var time = 0
         HeartbeatScope().launch {
-            val e = block(this,value)
-            callBack(e)
-            delay(period.toLong())
+            while (true){
+                time ++
+                block(this,value)
+                callBack(value)
+                if(time >= times) break
+                delay(50)
+            }
         }
     }
 }
 
-infix fun <T : AbstractedSpellShape> T.addGradual(block: suspend CoroutineScope.(T) -> T) : Pair<T,suspend CoroutineScope.(T) -> T>{
+infix fun <T : AbstractedSpellShape> T.addGradual(block: suspend CoroutineScope.(T) -> Unit) : Pair<T,suspend CoroutineScope.(T) -> Unit>{
     return this to block
 }
-infix fun <T : AbstractedSpellShape> Pair<T,suspend CoroutineScope.(T) -> T>.runByPeriod(period: Int) =
-    SpellShapeWithBehavior(Behavior(second,period),first)
+infix fun <T : AbstractedSpellShape> Pair<T,suspend CoroutineScope.(T) -> Unit>.times(times: Int) =
+    SpellShapeWithBehavior(Behavior(second,times),first)
 
 
 
 fun tes() {
-    val s = Circle centered getOverworldLocation(0,0,0) makeByRadius 10.0 addGradual { it.range = it.range!! + 1;it} runByPeriod 50 // gradual에 대한 겟함수 변경
+    val s = Circle centered getOverworldLocation(0,0,0) makeByRadius 10.0 addGradual { it.range = it.range!! + 1 } times 10 // gradual에 대한 겟함수 변경
     s.activateDelta {  }
 }

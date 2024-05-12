@@ -29,6 +29,7 @@ class MonsterCommand : CommandExecutor {
                 }
 
             }
+            if(p3.size == 1 && p3[0] == "autoSpawn") NeturalSpawnHandler()
         }
         return true
     }

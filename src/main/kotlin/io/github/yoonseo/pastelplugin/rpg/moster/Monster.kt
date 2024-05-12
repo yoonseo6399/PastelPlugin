@@ -32,6 +32,10 @@ abstract class Monster<E : Mob> {
             monster.memberFunctions.find { it.name.contains("spawn") }!!.call(instance,loc)
             return instance
         }
+        val list = ArrayList<io.github.yoonseo.pastelplugin.rpg.moster.Monster<*>>()
+    }
+    init {
+        list.add(this)
     }
 
     fun spawn(loc : Location){

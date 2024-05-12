@@ -1,6 +1,7 @@
 package io.github.yoonseo.pastelplugin.rpg.moster.impls
 
 import RayCast
+import com.destroystokyo.paper.entity.Pathfinder
 import io.github.yoonseo.pastelplugin.debug
 import io.github.yoonseo.pastelplugin.rpg.moster.Monster
 import io.github.yoonseo.pastelplugin.rpg.moster.MonsterStat
@@ -29,8 +30,9 @@ class Goblin : Monster<ZombieVillager>() {
             it.equipment.setItemInMainHand(ItemStack(Material.WOODEN_SWORD))
         }else {
             it.equipment.setItemInMainHand(ItemStack(Material.WOODEN_AXE))
-
         }
+
+
         it.addPotionEffect(PotionEffect(PotionEffectType.FIRE_RESISTANCE,PotionEffect.INFINITE_DURATION,1,false,false))
         it.addPotionEffect(PotionEffect(PotionEffectType.SPEED,PotionEffect.INFINITE_DURATION,1,false,false))
     }

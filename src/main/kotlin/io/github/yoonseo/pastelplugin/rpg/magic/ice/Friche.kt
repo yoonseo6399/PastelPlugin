@@ -73,6 +73,9 @@ class Friche : AbstractCustomItem(){
 
 
             team.addEntities(target)
+
+            val loc = target.location
+
             ScheduleRepeating(expireTick = 10*20) {
 
 
@@ -81,7 +84,7 @@ class Friche : AbstractCustomItem(){
                     (it.clone() lineTo target.location.add(0.0,1.0,0.0).clone()).showParticle(Particle.FALLING_DUST,0.2,Material.ICE.createBlockData())
                     target.addPotionEffect(PotionEffect(PotionEffectType.SLOW,20,10,false,false))
                     target.addPotionEffect(PotionEffect(PotionEffectType.GLOWING,20,10,false,false))
-
+                    target.teleport(loc)
                 }
             }
         }

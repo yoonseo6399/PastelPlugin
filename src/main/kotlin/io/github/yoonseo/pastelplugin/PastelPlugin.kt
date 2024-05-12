@@ -4,10 +4,13 @@ import io.github.monun.heartbeat.coroutines.HeartbeatScope
 import io.github.yoonseo.pastelplugin.ThorHammer.ThorHammer
 import io.github.yoonseo.pastelplugin.lib.AdjustableValueCommand
 import io.github.yoonseo.pastelplugin.rpg.magic.RedGloom.Explosion
+import io.github.yoonseo.pastelplugin.rpg.magic.RedGloom.Maline
+import io.github.yoonseo.pastelplugin.rpg.magic.RedGloom.ScatteredFaith
 import io.github.yoonseo.pastelplugin.rpg.magic.earth.RollingThunder
 import io.github.yoonseo.pastelplugin.rpg.magic.earth.Valagart
 import io.github.yoonseo.pastelplugin.rpg.magic.fire.Fireball
 import io.github.yoonseo.pastelplugin.rpg.magic.ice.Friche
+import io.github.yoonseo.pastelplugin.rpg.moster.Monster
 //import io.github.yoonseo.pastelplugin.commands.PastelPluginCommand
 import io.github.yoonseo.pastelplugin.rpg.moster.MonsterCommand
 import io.github.yoonseo.pastelplugin.rpg.quest.QuestCommand
@@ -49,7 +52,7 @@ class PastelPlugin : JavaPlugin() {
         Friche()
         Fireball()
         command_juho {
-            inventory.addItem(RollingThunder().getItem())
+            inventory.addItem(Maline().getItem())
         }
 
         autoReload()
@@ -67,6 +70,9 @@ class PastelPlugin : JavaPlugin() {
         // Plugin shutdown logic
         val keys = HashSet(GlowingBlock.onGlowing.keys)
         keys.forEach { debug(it); it.glowing(false) }
+        Monster.list.forEach{
+            it.mob?.remove()
+        }
     }
 
 
@@ -78,9 +84,9 @@ class PastelPlugin : JavaPlugin() {
                 val curMod = file.lastModified()
 
                 if(lastMod != curMod){
-                    delay(1000)
+                    delay(2000)
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"pm reload PastelPlugin")
-                    debug("Auto Reloaded pastelPlugin!!")
+                    debug("Auto Reloading pastelPlugin!!")
                 }
                 delay(1000)
             }

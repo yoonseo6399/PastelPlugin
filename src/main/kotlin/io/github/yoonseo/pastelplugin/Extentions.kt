@@ -127,6 +127,10 @@ fun <T : Any?> List<List<T>>.intoOneList() : List<T>{
     }
     return list
 }
+fun randomDirection(randomness : Int = 5): Vector {
+    val ra = -randomness..randomness
+    return Vector(ra.random(),ra.random(),ra.random()).normalize()
+}
 
 fun <T : Any> lowestObject(list :List<T>,transform : (T) -> Double) : T{
     require(list.isNotEmpty())
@@ -219,9 +223,19 @@ fun Player.sendDebugMessage(msg: Any){
 fun debug(msg : Any?){
     command_juho()?.sendMessage((msg ?: "null").toString())
 }
+fun debug(vararg msg : Any?){
+    msg.toList().forEach {
+        command_juho()?.sendMessage(it.toString())
+    }
+}
 
 fun Component.toText() =
     (this as TextComponent).content()
+
+fun LivingEntity.forceDamage(amount: Double){
+    if(health <= amount) health = 0.0 else health -= amount
+    hurtSound?.let { location.world.playSound(location, it,1f,1f) }
+}
 
 operator fun Component.plus(c : Component) = append(c)
 

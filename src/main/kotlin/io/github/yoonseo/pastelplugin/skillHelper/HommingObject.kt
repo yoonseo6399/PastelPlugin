@@ -1,4 +1,6 @@
 
+import io.github.yoonseo.pastelplugin.PastelPlugin
+import io.github.yoonseo.pastelplugin.debug
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Entity
@@ -10,20 +12,20 @@ import org.bukkit.util.Vector
 import kotlin.math.sqrt
 
 
-class HomingObject(val location: Location, var targetEntity: Entity, val shooter: Player) {
-    constructor(location: Location, targetEntity: Entity, shooter: Player, init: HomingObject.() -> Unit): this(location,targetEntity,shooter){
+class HomingObject(val location: Location, var targetEntity: Entity, val shooter: LivingEntity) {
+    constructor(location: Location, targetEntity: Entity, shooter: LivingEntity, init: HomingObject.() -> Unit): this(location,targetEntity,shooter){
         init(this)
     }
 
     var launched = false
-    var acceleration = 0.0f
+    var acceleration = 0.5f
     var currentSpeed = 0.0f
     var startingSpeed = 2.0f
-    var maxSpeed = 0.0f
+    var maxSpeed = 20.0f
     var whenCollusion : (HomingObject.(LivingEntity?) -> Unit)? = null
     var everyMovement : (HomingObject.() -> Unit)? = null
     var cancelWhenTargetIsntExist = false
-
+    var rotationLimit = 1.0f
     var homingDirection: Vector
 
 
@@ -32,7 +34,7 @@ class HomingObject(val location: Location, var targetEntity: Entity, val shooter
         homingDirection = location.direction
     }
 
-    fun launch(plugin: JavaPlugin){
+    fun launch(plugin: JavaPlugin = PastelPlugin.plugin){
         if(launched) throw IllegalStateException("this object is already launched")
         launched = true
         currentSpeed = startingSpeed
@@ -43,37 +45,38 @@ class HomingObject(val location: Location, var targetEntity: Entity, val shooter
         taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,0){ //유도
             homingDirection.multiply(0.25)
             repeat(currentSpeed.toInt()){
-
-                val homingLocationTemp = location.clone().add(homingDirection.multiply(currentSpeed))
-                val homingDirectionTemp = targetEntity.location.add(0.0,1.0,0.0).toVector().subtract(homingLocationTemp.toVector()).normalize() // 몇칸 앞에서 계산
-                val homingLocation = homingLocationTemp.clone().add(homingDirectionTemp.multiply(0.125))
+                //debug("")
+                //debug("repeated $it")
+                //debug("homing direction : $homingDirection ,location : ${location.toString()}")
+                val homingLocationTemp = location.clone().add(homingDirection.multiply(currentSpeed).multiply(rotationLimit))//.also { debug("homingLocTemp : $it") }
+                val homingDirectionTemp = targetEntity.location.add(0.0,1.0,0.0).toVector().subtract(homingLocationTemp.toVector()).normalize()//.also { debug("homingdirtenp : $it") } // 몇칸 앞에서 계산
+                val homingLocation = homingLocationTemp.clone().add(homingDirectionTemp.multiply(0.125))//.also { debug("homingLoc : $it") }
                 homingDirection = homingLocation.toVector().subtract(location.toVector()).normalize()
 
 
 
 
-                location.add(homingDirection.multiply(0.125))
+                location.add(homingDirection.multiply(0.125))//.also { debug("a" + it) })
 
                 //추진
 
 
                 //감속 + 공기저항
-                currentSpeed -= ((getDistance(homingLocationTemp.clone().add(homingDirection.multiply(1)),homingLocation).toFloat()-0.51f)*currentSpeed*(acceleration/maxSpeed)).let {
-                    it
-                }
+                currentSpeed -= ((getDistance(homingLocationTemp.clone().add(homingDirection.multiply(1)),homingLocation).toFloat()-0.51f)*currentSpeed*(acceleration/maxSpeed))
                 if(currentSpeed < startingSpeed){
                     currentSpeed = startingSpeed
                 }
 
                 getEntityColludeWithLocation(location).mapNotNull { it as? LivingEntity }
                 val radius = 1.0
-                val entities = location.world.getNearbyEntities(location, radius,radius+0.5,radius){ it is LivingEntity }.map {it as LivingEntity}
+                val entities = location.world.getNearbyEntities(location, radius,radius,radius){ it is LivingEntity }.map {it as LivingEntity}
                 if(location.block.isCollidable || entities.isNotEmpty()){
                     explode(entities.firstOrNull())
                 }
 
                 //if(!location.world.getNearbyEntities(location,1.0,1.0,1.0).isEmpty()) explode()
                 everyMovement?.let { it1 -> it1(this) }
+
             }
 
 

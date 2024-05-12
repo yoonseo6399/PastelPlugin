@@ -3,10 +3,12 @@ package io.github.yoonseo.pastelplugin.itemHandlers
 import io.github.yoonseo.pastelplugin.ComponentNamedWith
 import io.github.yoonseo.pastelplugin.isNamed
 import io.github.yoonseo.pastelplugin.itemHandlers.Requires.*
+import io.github.yoonseo.pastelplugin.skillHelper.Selector
 import io.github.yoonseo.pastelplugin.system.register
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import org.bukkit.Material
+import org.bukkit.entity.LivingEntity
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEvent
@@ -95,11 +97,13 @@ interface CustomItem : Listener{
 class AdvancedInteractConditions(val i: CustomItem, val e: PlayerInteractEvent){
     val player = e.player
     val playerLocation = e.player.location
+    val direction = playerLocation.direction
+    val target : LivingEntity by lazy { Selector(100).selectLivingEntity(playerLocation) {it != player}?.firstOrNull() ?: throw RequirementDenied("LAAAZZZZZZZZZZY") }
 
 
 
     /**
-    @throws RuntimeException to stop code( corutines
+    @throws RuntimeException to stop code
      **/
     fun require(requires: Requires) {
         if(
