@@ -12,7 +12,6 @@ class Line(val loc1 : Location, val loc2: Location) {
         val times = ((loc1 distanceTo loc2)/slope.distance(Vector(0,0,0))).toInt()
         for(i in 0..times){
             loc1.add(slope)
-            debug("128309123")
             try {
                 loc1.world.spawnParticle(particle,loc1,1,0.0,0.0,0.0,0.0)
             }catch (e : Exception){

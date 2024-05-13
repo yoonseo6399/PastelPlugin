@@ -84,9 +84,14 @@ class PastelPlugin : JavaPlugin() {
                 val curMod = file.lastModified()
 
                 if(lastMod != curMod){
-                    delay(2000)
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"pm reload PastelPlugin")
-                    debug("Auto Reloading pastelPlugin!!")
+                    delay(1000)
+                    val lastestMod = file.lastModified()
+                    delay(500)
+                    if(lastestMod == curMod){
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"pm reload PastelPlugin")
+                        debug("Auto Reloading pastelPlugin!!")
+                    }
+
                 }
                 delay(1000)
             }

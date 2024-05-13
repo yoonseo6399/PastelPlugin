@@ -21,7 +21,9 @@ import org.bukkit.Material
 import org.bukkit.Particle
 import org.bukkit.Particle.DustOptions
 import org.bukkit.Particle.END_ROD
+import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.LivingEntity
+import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scoreboard.Team
@@ -39,57 +41,52 @@ class Maline : AbstractCustomItem(){
         playerInteractionEvent {
             require(Requires.THIS_ITEM)
             require(Requires.RIGHT_CLICK)
-            HeartbeatScope().launch {
-                repeat(4){
-                    target
-                    playerLocation.world.playSound(playerLocation,org.bukkit.Sound.BLOCK_CONDUIT_DEACTIVATE,10f,1f)
+            spawnLaserElectroBeam(player,target,team)
+            ScheduleRepeating(expireTick = 4){
 
-                    HomingObject(playerLocation,target,player){
-                        homingDirection = direction.multiply(1.5).add(randomDirection(10)).normalize()
-                        rotationLimit = 10000f
-                        Delay((target.location distanceTo playerLocation).toLong()/3){ rotationLimit = 1f }
-                        maxSpeed = 5f
-                        cancelWhenTargetIsntExist = true
-
-                        everyMovement = {
-                            location.world.spawnParticle(Particle.REDSTONE,location,1,0.0,0.0,0.0,0.0,DustOptions(Color.fromRGB(192,0,209),1f))
-                            if(target.location distanceTo playerLocation < 10) rotationLimit = 1f
-                        }
-
-                        whenCollusion = {
-
-                            if(it == null) {
-                                kill()
-                            }else if(it != player){
-                                val laser = location.clone().add(homingDirection.clone().multiply(-10)) lineTo location.clone().add(homingDirection.clone().multiply(20))
-
-                                laser.showParticle(Particle.REDSTONE,0.1,DustOptions(Color.RED,1f))
-                                it.forceDamage(5.0)
-                                it.addPotionEffect(PotionEffect(PotionEffectType.WITHER,20*4,3,false,true))
-                                team.addEntity(it)
-                                it.addPotionEffect(PotionEffect(PotionEffectType.GLOWING,20*1,1,false,false))
-                                Delay(20) { team.removeEntity(it) }
-                                playerLocation.world.playSound(playerLocation,org.bukkit.Sound.ENTITY_FIREWORK_ROCKET_BLAST,5f,1.1f)
-                                LightingStrike(target.location,3.0,20).create(END_ROD,homingDirection) {
-
-                                }
-
-                                kill()
-                            }
-
-
-
-                        }
-                    }.launch()
-                    delay(100)
-                }
             }
         }
     }
-    fun spawnLaserElectroBeam(a : AdvancedInteractConditions,team : Team){
-        a.apply {
+    fun spawnLaserElectroBeam(player : Player,target: LivingEntity,team : Team){
+        player.location.world.playSound(player.location,org.bukkit.Sound.BLOCK_CONDUIT_DEACTIVATE,10f,1f)
 
-        }
-        }
+
+        val direction = player.location.direction
+        HomingObject(player.location,target,player){
+            homingDirection = direction.multiply(1.2).add(randomDirection(10)).normalize()
+            rotationLimit = 10000f
+            Delay((targetEntity.location distanceTo shooter.location).toLong()/2){ rotationLimit = 1f }
+            maxSpeed = 5f
+            cancelWhenTargetIsntExist = true
+
+            everyMovement = {
+                location.world.spawnParticle(Particle.REDSTONE,location,1,0.0,0.0,0.0,0.0,DustOptions(Color.fromRGB(192,0,209),1f))
+                if(target.location distanceTo player.location < 6) rotationLimit = 1f
+            }
+
+            whenCollusion = { target ->
+
+                if(target == null) {
+                    kill()
+                }else if(target != player){
+                    val laser = location.clone().add(homingDirection.clone().multiply(-10)) lineTo location.clone().add(homingDirection.clone().multiply(20))
+
+                    laser.showParticle(Particle.REDSTONE,0.1,DustOptions(Color.RED,1f))
+                    target.forceDamage(5.0)
+                    target.addPotionEffect(PotionEffect(PotionEffectType.WITHER,20*4,3,false,true))
+                    team.addEntity(target)
+                    target.addPotionEffect(PotionEffect(PotionEffectType.GLOWING,20*1,1,false,false))
+                    Delay(20) { team.removeEntity(target) }
+                    player.location.world.playSound(player.location,org.bukkit.Sound.ENTITY_FIREWORK_ROCKET_BLAST,5f,1.1f)
+                    LightingStrike(target.location,1.0,10).create(END_ROD,homingDirection) {
+
+                        //it.spawn(ArmorStand::class)
+                    }
+                    kill()
+                }
+            }
+        }.launch()
+    }
+
 
 }
