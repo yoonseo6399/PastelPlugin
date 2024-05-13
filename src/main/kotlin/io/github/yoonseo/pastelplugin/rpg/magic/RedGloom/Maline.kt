@@ -19,8 +19,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.Particle
-import org.bukkit.Particle.DustOptions
-import org.bukkit.Particle.END_ROD
+import org.bukkit.Particle.*
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
@@ -78,10 +77,12 @@ class Maline : AbstractCustomItem(){
                     target.addPotionEffect(PotionEffect(PotionEffectType.GLOWING,20*1,1,false,false))
                     Delay(20) { team.removeEntity(target) }
                     player.location.world.playSound(player.location,org.bukkit.Sound.ENTITY_FIREWORK_ROCKET_BLAST,5f,1.1f)
-                    LightingStrike(target.location,1.0,10).create(END_ROD,homingDirection) {
+                    random(20){
+                        LightingStrike(target.location,1.0,5).create(REDSTONE,homingDirection,DustOptions(Color.fromRGB(192,0,209),1f)) {
 
-                        //it.spawn(ArmorStand::class)
+                        }
                     }
+
                     kill()
                 }
             }

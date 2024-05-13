@@ -22,6 +22,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.Vector
 import kotlin.reflect.KClass
+import kotlin.time.times
 
 
 infix fun ItemStack.isNamed(name : String) =
@@ -260,6 +261,9 @@ infix fun ItemStack.ComponentNamedWith(textComponent: TextComponent): Boolean {
         Bukkit.getLogger().warning("ItemName is Not a comparable object")
         return false
     }
+}
+fun random(percentage: Int,block: () -> Unit){
+    if(Math.random() * 100 <= percentage) block()
 }
 
 fun <T : Entity> Location.spawn(clazz: KClass<T>) : T{
