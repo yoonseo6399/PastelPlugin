@@ -10,6 +10,7 @@ import io.github.yoonseo.pastelplugin.rpg.magic.earth.RollingThunder
 import io.github.yoonseo.pastelplugin.rpg.magic.earth.Valagart
 import io.github.yoonseo.pastelplugin.rpg.magic.fire.Fireball
 import io.github.yoonseo.pastelplugin.rpg.magic.ice.Friche
+import io.github.yoonseo.pastelplugin.rpg.magic.wind.Locus
 import io.github.yoonseo.pastelplugin.rpg.moster.Monster
 //import io.github.yoonseo.pastelplugin.commands.PastelPluginCommand
 import io.github.yoonseo.pastelplugin.rpg.moster.MonsterCommand
@@ -51,8 +52,9 @@ class PastelPlugin : JavaPlugin() {
         Valagart()
         Friche()
         Fireball()
+        Maline()
         command_juho {
-            inventory.addItem(Maline().getItem())
+            inventory.addItem(Locus().getItem())
         }
 
         autoReload()

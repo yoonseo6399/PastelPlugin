@@ -10,13 +10,13 @@ import org.bukkit.entity.Entity
 import org.bukkit.util.Vector
 
 object Forward {
-    fun run(startLocation: Location,direction: Vector,range: Double,interval: Double = 1.0,oneBlockDelay: Long = 50,tickRepeating : Int = 1,block : (Location) -> Unit){
+    fun run(startLocation: Location,direction: Vector,range: Double,interval: Double = 1.0,oneBlockDelay: Long = 50,tickRepeating : Int = 1,block : suspend CoroutineScope.(Location) -> Unit){
         HeartbeatScope().launch {
             val loc = startLocation.clone();val dir = direction.multiply(interval)
             repeat((range).toInt()){
                 repeat((1*tickRepeating/interval).toInt()){
                     loc.add(dir)
-                    block(loc)
+                    block(this,loc)
                 }
                 delay(oneBlockDelay)
             }

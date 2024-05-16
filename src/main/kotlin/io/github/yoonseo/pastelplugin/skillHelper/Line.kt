@@ -6,7 +6,9 @@ import org.bukkit.Location
 import org.bukkit.Particle
 import org.bukkit.util.Vector
 
-class Line(val loc1 : Location, val loc2: Location) {
+class Line private constructor(private val loc1 : Location, private val loc2: Location,dummy: Int = 1) {
+    constructor(location1 : Location,location2: Location) : this(location1.clone(),location2.clone(),1)
+
     fun showParticle(particle: Particle, interval: Double){
         val slope = loc2.toVector().subtract(loc1.toVector()).normalize().multiply(interval)
         val times = ((loc1 distanceTo loc2)/slope.distance(Vector(0,0,0))).toInt()

@@ -1,11 +1,9 @@
 
 import io.github.yoonseo.pastelplugin.PastelPlugin
-import io.github.yoonseo.pastelplugin.debug
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
-import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitScheduler
 import org.bukkit.util.Vector
@@ -27,7 +25,7 @@ class HomingObject(val location: Location, var targetEntity: Entity, val shooter
     var cancelWhenTargetIsntExist = false
     var rotationLimit = 1.0f
     var homingDirection: Vector
-
+    var collideDetectionRange = 1.0
 
     var taskId: Int = -1
     init{
@@ -68,8 +66,8 @@ class HomingObject(val location: Location, var targetEntity: Entity, val shooter
                 }
 
                 getEntityColludeWithLocation(location).mapNotNull { it as? LivingEntity }
-                val radius = 1.0
-                val entities = location.world.getNearbyEntities(location, radius,radius,radius){ it is LivingEntity }.map {it as LivingEntity}
+
+                val entities = location.world.getNearbyEntities(location, collideDetectionRange,collideDetectionRange,collideDetectionRange){ it is LivingEntity }.map {it as LivingEntity}
                 if(location.block.isCollidable || entities.isNotEmpty()){
                     explode(entities.firstOrNull())
                 }

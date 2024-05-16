@@ -1,6 +1,7 @@
 package io.github.yoonseo.pastelplugin.itemHandlers
 
 import io.github.yoonseo.pastelplugin.ComponentNamedWith
+import io.github.yoonseo.pastelplugin.ScheduleRepeating
 import io.github.yoonseo.pastelplugin.isNamed
 import io.github.yoonseo.pastelplugin.itemHandlers.Requires.*
 import io.github.yoonseo.pastelplugin.skillHelper.Selector
@@ -31,6 +32,10 @@ abstract class AbstractCustomItem : CustomItem {
     val listeners = ArrayList<(PlayerItemHeldEvent) -> Unit>();
     val interactEventList = ArrayList<AdvancedInteractConditions.(PlayerInteractEvent) -> Unit>()
     val hotbarItemChangeEventList = ArrayList<(PlayerItemHeldEvent) -> Unit>()
+
+    override var cooldown = 0
+
+
     override fun playerInteractionEvent(advancedInteractConditions: AdvancedInteractConditions.(PlayerInteractEvent) -> Unit) {
         interactEventList.add(advancedInteractConditions)
     }
@@ -90,6 +95,7 @@ interface CustomItem : Listener{
     val name : TextComponent
     val lores : ArrayList<Component?>
     val itemType : Material
+    var cooldown: Int
     fun playerInteractionEvent(advancedInteractConditions: AdvancedInteractConditions.(PlayerInteractEvent) -> Unit)
     fun playerItemChangeToOtherItemEvent(code: (PlayerItemHeldEvent) -> Unit)
 }
@@ -98,7 +104,7 @@ class AdvancedInteractConditions(val i: CustomItem, val e: PlayerInteractEvent){
     val player = e.player
     val playerLocation = e.player.location
     val direction = playerLocation.direction
-    val target : LivingEntity by lazy { Selector(100).selectLivingEntity(playerLocation) {it != player}?.firstOrNull() ?: throw RequirementDenied("LAAAZZZZZZZZZZY") }
+    val target : LivingEntity by lazy { Selector(100).selectLivingEntity(player.eyeLocation) {it != player}?.firstOrNull() ?: throw RequirementDenied("LAAAZZZZZZZZZZY") }
 
 
 
@@ -122,9 +128,17 @@ class AdvancedInteractConditions(val i: CustomItem, val e: PlayerInteractEvent){
                     }
                 }
         ){//in  if(!when(){})
-            throw RequirementDenied("required : ${requires.name}, if you see this message, Something went wrong, pls use try-catch on your code")
+            stopCode()
         }
     }
+    fun cooldown(tick: Int){
+        if(i.cooldown <= 0){
+            i.cooldown = tick
+            ScheduleRepeating(expireTick = tick.toLong()) { i.cooldown -- }
+        }else stopCode()
+    }
+
+    private fun stopCode(): Nothing = throw RequirementDenied("if you see this message, Something went wrong, pls use try-catch on your code")
 }
 enum class Requires{
     LEFT_CLICK,RIGHT_CLICK,
