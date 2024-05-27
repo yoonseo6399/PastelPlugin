@@ -222,7 +222,7 @@ fun Player.sendDebugMessage(msg: Any){
 }
 
 fun debug(msg : Any?){
-    command_juho()?.sendMessage((msg ?: "null").toString())
+    command_juho()?.sendMessage((msg ?: "null").toString().toComponent())
 }
 fun debug(vararg msg : Any?){
     msg.toList().forEach {
