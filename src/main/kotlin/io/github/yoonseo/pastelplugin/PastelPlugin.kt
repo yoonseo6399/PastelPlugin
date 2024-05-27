@@ -3,6 +3,7 @@ package io.github.yoonseo.pastelplugin
 import io.github.monun.heartbeat.coroutines.HeartbeatScope
 import io.github.yoonseo.pastelplugin.ThorHammer.ThorHammer
 import io.github.yoonseo.pastelplugin.lib.AdjustableValueCommand
+import io.github.yoonseo.pastelplugin.lib.Debugger
 import io.github.yoonseo.pastelplugin.rpg.magic.RedGloom.Explosion
 import io.github.yoonseo.pastelplugin.rpg.magic.RedGloom.Maline
 import io.github.yoonseo.pastelplugin.rpg.magic.RedGloom.ScatteredFaith
@@ -41,6 +42,8 @@ class PastelPlugin : JavaPlugin() {
     override fun onEnable() {
         // Plugin startup logic
         plugin = this
+
+        Debugger.init()
         getCommand("quest")!!.setExecutor(QuestCommand())
         getCommand("monster")!!.setExecutor(MonsterCommand())
         getCommand("setvalue")!!.setExecutor(AdjustableValueCommand())

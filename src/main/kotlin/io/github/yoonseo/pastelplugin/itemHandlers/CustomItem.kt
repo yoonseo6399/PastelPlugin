@@ -104,9 +104,9 @@ class AdvancedInteractConditions(val i: CustomItem, val e: PlayerInteractEvent){
     val player = e.player
     val playerLocation = e.player.location
     val direction = playerLocation.direction
-    val target : LivingEntity by lazy { Selector(100).selectLivingEntity(player.eyeLocation) {it != player}?.firstOrNull() ?: throw RequirementDenied("LAAAZZZZZZZZZZY") }
+    val target : LivingEntity by lazy { getTargetLegacy() ?: throw IllegalAccessException("Target required") }
 
-
+    private fun getTargetLegacy() = Selector(100).selectLivingEntity(player.eyeLocation) {it != player}?.firstOrNull()
 
     /**
     @throws RuntimeException to stop code
@@ -126,6 +126,9 @@ class AdvancedInteractConditions(val i: CustomItem, val e: PlayerInteractEvent){
                     THIS_ITEM_NAME -> {
                         e.player.equipment.itemInMainHand isNamed i.name.content()
                     }
+                    TARGET -> {
+                        getTargetLegacy() != null
+                    }
                 }
         ){//in  if(!when(){})
             stopCode()
@@ -142,5 +145,5 @@ class AdvancedInteractConditions(val i: CustomItem, val e: PlayerInteractEvent){
 }
 enum class Requires{
     LEFT_CLICK,RIGHT_CLICK,
-    THIS_ITEM,THIS_ITEM_NAME
+    THIS_ITEM,THIS_ITEM_NAME,TARGET
 }

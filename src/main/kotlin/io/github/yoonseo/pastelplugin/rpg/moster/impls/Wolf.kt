@@ -5,6 +5,8 @@ import io.github.yoonseo.pastelplugin.rpg.moster.MonsterStat
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.entity.Wolf
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
 import kotlin.reflect.KClass
 
 class Wolf : Monster<org.bukkit.entity.Wolf>(){
@@ -18,6 +20,9 @@ class Wolf : Monster<org.bukkit.entity.Wolf>(){
         2.0
 
     )
+    override val spawnInitiator: ((Wolf) -> Unit) = {
+        it.addPotionEffect(PotionEffect(PotionEffectType.SPEED, Int.MAX_VALUE,2,false,false))
+    }
     override val monsterMainClass: KClass<Wolf> = org.bukkit.entity.Wolf::class
     override val name: Component = Component.text("굼주린 늑대").color(NamedTextColor.BLUE)
 }

@@ -7,6 +7,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import kotlin.random.Random
 import kotlin.reflect.KClass
 
 class MonsterCommand : CommandExecutor {
@@ -26,6 +27,7 @@ class MonsterCommand : CommandExecutor {
                     "Goblin" -> repeat(p3[2].toInt()){
                         Monster.spawn(Goblin::class,(p0 as Player).location, level)
                     }
+                    else -> throw Exception("monster not exist")
                 }
 
             }

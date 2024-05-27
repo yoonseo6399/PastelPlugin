@@ -45,6 +45,7 @@ class Maline : AbstractCustomItem(){
         playerInteractionEvent {
             require(Requires.THIS_ITEM)
             require(Requires.RIGHT_CLICK)
+            require(Requires.TARGET)
             ScheduleRepeating(expireTick = 4){
                 spawnLaserElectroBeam(player,target,team)
             }
