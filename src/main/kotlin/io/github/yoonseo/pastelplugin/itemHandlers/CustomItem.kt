@@ -92,7 +92,7 @@ abstract class AbstractCustomItem : CustomItem {
 class RequirementDenied(msg: String): RuntimeException(msg)
 
 interface CustomItem : Listener{
-    val name : TextComponent
+    val name : Component
     val lores : ArrayList<Component?>
     val itemType : Material
     var cooldown: Int
@@ -124,7 +124,7 @@ class AdvancedInteractConditions(val i: CustomItem, val e: PlayerInteractEvent){
                         e.player.equipment.itemInMainHand.itemMeta?.displayName() == i.name
                     }
                     THIS_ITEM_NAME -> {
-                        e.player.equipment.itemInMainHand isNamed i.name.content()
+                        e.player.equipment.itemInMainHand ComponentNamedWith i.name
                     }
                     TARGET -> {
                         getTargetLegacy() != null

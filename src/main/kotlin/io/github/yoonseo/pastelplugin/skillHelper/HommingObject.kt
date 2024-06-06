@@ -15,6 +15,8 @@ class HomingObject(val location: Location, var targetEntity: Entity, val shooter
         init(this)
     }
 
+    constructor(randomL: Location, target: LivingEntity) : this()
+
     var launched = false
     var acceleration = 0.5f
     var currentSpeed = 0.0f

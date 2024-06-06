@@ -251,16 +251,19 @@ val Location.simpleString : String
 
 //fun String.toComponent() = Component.text(this)
 
-infix fun ItemStack.ComponentNamedWith(textComponent: TextComponent): Boolean {
-    val com1 = this.itemMeta?.displayName() ?: return false
-    if(com1 is TranslatableComponent){
-        return com1.args().firstNotNullOfOrNull { it as? TextComponent }?.content() == textComponent.content()
-    }else if(com1 is TextComponent){
-        return com1.content() == textComponent.content()
-    }else {
-        Bukkit.getLogger().warning("ItemName is Not a comparable object")
-        return false
-    }
+infix fun ItemStack.ComponentNamedWith(textComponent: Component): Boolean {
+    if (textComponent is TextComponent){
+        val com1 = this.itemMeta?.displayName() ?: return false
+        if(com1 is TranslatableComponent){
+            return com1.args().firstNotNullOfOrNull { it as? TextComponent }?.content() == textComponent.content()
+        }else if(com1 is TextComponent){
+            return com1.content() == textComponent.content()
+        }else {
+            Bukkit.getLogger().warning("ItemName is Not a comparable object")
+            return false
+        }
+    }else throw IllegalArgumentException("not a TextComponent")
+
 }
 fun random(percentage: Int,block: () -> Unit){
     if(Math.random() * 100 <= percentage) block()
