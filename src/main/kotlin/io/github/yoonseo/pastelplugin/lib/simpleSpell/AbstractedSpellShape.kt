@@ -106,9 +106,3 @@ infix fun <T : AbstractedSpellShape> T.addGradual(block: suspend CoroutineScope.
 infix fun <T : AbstractedSpellShape> Pair<T,suspend CoroutineScope.(T) -> Unit>.times(times: Int) =
     SpellShapeWithBehavior(Behavior(second,times),first)
 
-
-
-fun tes() {
-    val s = Circle centered getOverworldLocation(0,0,0) makeByRadius 10.0 addGradual { it.range = it.range!! + 1 } times 10 // gradual에 대한 겟함수 변경
-    s.activateDelta {  }
-}
