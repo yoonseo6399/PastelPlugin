@@ -9,7 +9,6 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.Style
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Particle
@@ -26,6 +25,7 @@ class ThorHammer : AbstractCustomItem() {
     private var hammerObject : HomingObject? = null
     private var isReturning = false
     private var lastAttackEntity : LivingEntity? = null
+    lateinit var player : LivingEntity
     //hammer 기본설정
     private val initHammer : HomingObject.() -> Unit = {
         acceleration = 0.5f
@@ -33,7 +33,7 @@ class ThorHammer : AbstractCustomItem() {
         maxSpeed = 20f
 
         whenCollusion = { livingEntity: LivingEntity? ->
-            if(livingEntity == shooter){
+            if(livingEntity == player){
                 if(isReturning){
                     hammerAvailable = true
                     isReturning = false
@@ -45,7 +45,7 @@ class ThorHammer : AbstractCustomItem() {
                 lastAttackEntity = null
             }else if(lastAttackEntity != livingEntity){ // 무한번개 막기
                 lastAttackEntity = livingEntity
-                livingEntity.damage(30.0,shooter)
+                livingEntity.damage(30.0,player)
                 livingEntity.velocity = location.direction.multiply(2)
                 location.world.spawn(location,LightningStrike::class.java)
                 location.world.spawnParticle(Particle.END_ROD,location,40)
@@ -70,6 +70,7 @@ class ThorHammer : AbstractCustomItem() {
             //e.player.sendMessage("init - R1")
             require(Requires.RIGHT_CLICK)
             //e.player.sendMessage("init - R2")
+            this@ThorHammer.player = player
 
             if(taskId == -1) ScheduleRepeating(cycle = 1){
                 //player.sendActionBar(Component.text("hamm : $hammerAvailable , isReturning : $isReturning , hommingTo: ${hammerObject?.targetEntity}"))
@@ -83,7 +84,7 @@ class ThorHammer : AbstractCustomItem() {
                 Bukkit.getLogger().info(player.displayName)
                 if(hammerAvailable){
                     lastAttackEntity = null
-                    HomingObject(playerLocation, targets.first(),player,initHammer).apply{
+                    HomingObject(playerLocation, targets.first(), initHammer).apply{
                         targetEntity = targets.first()
                         launch(PastelPlugin.plugin)
                         hammerObject = this

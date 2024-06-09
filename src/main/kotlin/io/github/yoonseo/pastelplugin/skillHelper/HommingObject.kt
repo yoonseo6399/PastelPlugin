@@ -10,12 +10,13 @@ import org.bukkit.util.Vector
 import kotlin.math.sqrt
 
 
-class HomingObject(val location: Location, var targetEntity: Entity, val shooter: LivingEntity) {
-    constructor(location: Location, targetEntity: Entity, shooter: LivingEntity, init: HomingObject.() -> Unit): this(location,targetEntity,shooter){
+class HomingObject(val location: Location, var targetEntity: Entity) {
+    constructor(location: Location, targetEntity: Entity, init: HomingObject.() -> Unit): this(
+        location,
+        targetEntity
+    ){
         init(this)
     }
-
-    constructor(randomL: Location, target: LivingEntity) : this()
 
     var launched = false
     var acceleration = 0.5f

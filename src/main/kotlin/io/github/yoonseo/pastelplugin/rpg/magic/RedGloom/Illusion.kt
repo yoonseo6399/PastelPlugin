@@ -2,7 +2,6 @@ package io.github.yoonseo.pastelplugin.rpg.magic.RedGloom
 
 import HomingObject
 import io.github.monun.heartbeat.coroutines.Heartbeat
-import io.github.monun.heartbeat.coroutines.HeartbeatScope
 import io.github.yoonseo.pastelplugin.itemHandlers.AbstractCustomItem
 import io.github.yoonseo.pastelplugin.itemHandlers.Requires
 import io.github.yoonseo.pastelplugin.lib.simpleSpell.Circle
@@ -10,7 +9,6 @@ import io.github.yoonseo.pastelplugin.lib.simpleSpell.addGradual
 import io.github.yoonseo.pastelplugin.lib.simpleSpell.times
 import kotlinx.coroutines.*
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
@@ -53,7 +51,7 @@ class Illusion : AbstractCustomItem() {
                 val randomL = target.location.clone().add(Vector.getRandom().multiply(random()*10))
                 if(randomL.block.type == Material.CHERRY_LEAVES){
                     randomL
-                    HomingObject(randomL,target,target){
+                    HomingObject(randomL, target){
                         homingDirection = Vector.getRandom().multiply(random())
                     }
                 }

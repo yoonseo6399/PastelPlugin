@@ -8,7 +8,6 @@ import io.github.yoonseo.pastelplugin.itemHandlers.Requires
 import io.github.yoonseo.pastelplugin.lib.simpleSpell.Circle
 import io.github.yoonseo.pastelplugin.lib.simpleSpell.addGradual
 import io.github.yoonseo.pastelplugin.lib.simpleSpell.times
-import io.github.yoonseo.pastelplugin.overworld
 import io.github.yoonseo.pastelplugin.skillHelper.Selector
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
@@ -31,7 +30,7 @@ class ScatteredFaith : AbstractCustomItem(){
 
             if(e.action.isRightClick){
                 target.damage(1.5)
-                HomingObject(target.location.clone().add(0.0,2.0,0.0),player,target){
+                HomingObject(target.location.clone().add(0.0,2.0,0.0), player){
                     rotationLimit = 2f
                     whenCollusion = {
                         if(it != null && it == player)

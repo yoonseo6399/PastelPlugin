@@ -1,30 +1,19 @@
 package io.github.yoonseo.pastelplugin.rpg.magic.RedGloom
 
 import HomingObject
-import io.github.monun.heartbeat.coroutines.HeartbeatScope
 import io.github.yoonseo.pastelplugin.*
 import io.github.yoonseo.pastelplugin.itemHandlers.AbstractCustomItem
-import io.github.yoonseo.pastelplugin.itemHandlers.AdvancedInteractConditions
 import io.github.yoonseo.pastelplugin.itemHandlers.Requires
 import io.github.yoonseo.pastelplugin.lib.simpleSpell.Circle
-import io.github.yoonseo.pastelplugin.lib.simpleSpell.addGradual
-import io.github.yoonseo.pastelplugin.lib.simpleSpell.times
 import io.github.yoonseo.pastelplugin.skillHelper.LightingStrike
-import io.github.yoonseo.pastelplugin.skillHelper.Selector
 import io.github.yoonseo.pastelplugin.skillHelper.lineTo
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
 import org.bukkit.Color
-import org.bukkit.Location
 import org.bukkit.Material
-import org.bukkit.Particle
 import org.bukkit.Particle.*
-import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
@@ -46,6 +35,7 @@ class Maline : AbstractCustomItem(){
             require(Requires.THIS_ITEM)
             require(Requires.RIGHT_CLICK)
             require(Requires.TARGET)
+
             ScheduleRepeating(expireTick = 4){
                 spawnLaserElectroBeam(player,target,team)
             }
@@ -62,10 +52,10 @@ class Maline : AbstractCustomItem(){
 
 
         val direction = player.location.direction
-        HomingObject(player.location,target,player){
+        HomingObject(player.location, target){
             homingDirection = direction.multiply(1.2).add(randomDirection(10)).normalize()
             rotationLimit = 10000f
-            Delay((targetEntity.location distanceTo shooter.location).toLong()/2){ rotationLimit = 1f }
+            Delay((targetEntity.location distanceTo player.location).toLong()/2){ rotationLimit = 1f }
             maxSpeed = 10f
             cancelWhenTargetIsntExist = true
             collideDetectionRange = 5.0

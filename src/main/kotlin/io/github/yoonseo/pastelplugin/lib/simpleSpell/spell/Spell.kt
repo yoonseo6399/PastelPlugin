@@ -3,8 +3,18 @@ package io.github.yoonseo.pastelplugin.lib.simpleSpell.spell
 import io.github.yoonseo.pastelplugin.itemHandlers.CustomItem
 import org.bukkit.entity.Player
 
-open class Spell {
-    lateinit var
+interface Spell {
+    var activator : SpellActivator
+    var action : SpellAction
+    companion object{
+        operator fun invoke()
+    }
+    fun activate(caster : Player): ActivatedSpell
+}
+
+
+open class SpellImpl : Spell{
+    lateinit var attitude
 
 
 
@@ -15,7 +25,11 @@ open class Spell {
 
 
 }
-class ActivatedSpell(player: Player){
+class ActivatedSpell(upperSpell: Spell,player: Player) : Spell by upperSpell{
+
+}
+
+class SpellAction{
 
 }
 class SpellActivator(val block : () -> Player?){
