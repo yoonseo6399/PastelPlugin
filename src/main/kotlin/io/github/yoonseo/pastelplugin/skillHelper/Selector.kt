@@ -16,7 +16,7 @@ class Selector(val range : Number) {
     }
     fun selectLivingEntity(startLocation: Location,predicate: (LivingEntity) -> Boolean = {true}) : List<LivingEntity>? =
         selectLivingEntity(startLocation,startLocation.direction,predicate)
-
+    /**pick a block except air*/
     fun selectBlock(startLocation: Location,direction: Vector,predicate: (Block) -> Boolean = {true}) : Block?{
         return RayCast.runBlock<Block>(startLocation,direction,range.toDouble(),predicate)
     }

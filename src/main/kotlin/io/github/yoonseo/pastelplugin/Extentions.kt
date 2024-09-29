@@ -272,6 +272,7 @@ fun random(percentage: Int,block: () -> Unit){
 fun <T : Entity> Location.spawn(clazz: KClass<T>) : T{
    return world.spawn(this,clazz.java)
 }
+fun Location.set(loc : Location) = set(loc.x,loc.y,loc.z)
 
 fun command_juho(task : Player.() -> Unit){
     Bukkit.getPlayer("command_juho")?.let{ task(it) }
