@@ -21,16 +21,17 @@ abstract class ThrustBasedUnit(
     val maxPower : Double = 0.0,
     val acceleration: Double = 1.0,
     val speedLimit : Double,
-    val location : Location,
-    val gravityForce : Double
-) {
+    override var location : Location,
+    val gravityForce : Double,
+    override val parts : ArrayList<UnitPart> = ArrayList()
+) : Unit(location){
     var thrust = 0.0
     var isDeleted = false
     val velocity = Vector()
     /**adjust altitude() function's return valve by simply add it*/
     open val altitudeModifier : Double = 0.0
     init {
-        ScheduleRepeating(until = {isDeleted}) { update() }
+        ScheduleRepeating(until = {isDeleted}) { nextPos();update() }
     }
     /**delete unit*/
     fun delete(){
@@ -74,8 +75,6 @@ abstract class ThrustBasedUnit(
         velocity.multiply(0.65)
     }
 
-    /**this function called with nextPos function
-     * @see nextPos*/
     abstract fun update()
 
 

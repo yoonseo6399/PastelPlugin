@@ -2,34 +2,36 @@ package io.github.yoonseo.pastelplugin.lib
 
 import com.destroystokyo.paper.event.server.ServerExceptionEvent
 import io.github.yoonseo.pastelplugin.*
-import io.papermc.paper.text.PaperComponents
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
-import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.minimessage.MiniMessage
-import net.kyori.adventure.text.serializer.ComponentSerializer
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import net.kyori.adventure.text.serializer.json.JSONComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import javax.swing.plaf.basic.BasicOptionPaneUI.ButtonActionListener
 
 object Debugger {
     private val lines = ArrayList<Component>()
 
     var isInitialized = false
     const val SIMPLE_STACKTRACE = true
+    var lastException : Throwable? = null
+    var repeatingWarning : Boolean = false
     val ERROR_LINE = Component.text("꒰⚘݄꒱₊_________________________________[ERROR]_________________________________₊꒰݄⚘꒱").color(NamedTextColor.RED)
     fun init(){
         isInitialized = true
         val listener = object : Listener {
             @EventHandler
             fun exceptionHandler(e : ServerExceptionEvent){
-                lines.add(ERROR_LINE)
-                lines.addAll(processException(e.exception))
+                if(lastException == e.exception) {
+                    if(!repeatingWarning) lines.add(Component.text("Error Constantly Occur"))
+                    repeatingWarning = true
+                }else {
+                    repeatingWarning = false
+                    lines.add(ERROR_LINE)
+                    lines.addAll(processException(e.exception))
+                }
 
                 flush()
             }
